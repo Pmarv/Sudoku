@@ -1,5 +1,6 @@
 package com.fs.sudoku;
 
+import javafx.application.Application;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,7 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SudokuApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SudokuApplication.class, args);
+        Application.launch(UIApplication.class, args);
     }
 
 }
+
