@@ -1,7 +1,7 @@
 package com.fs.sudoku;
 
+import com.fs.sudoku.Frontend.UIApplication;
 import javafx.application.Application;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
