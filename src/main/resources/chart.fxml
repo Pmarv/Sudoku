@@ -3,5 +3,5 @@
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.fs.sudoku.ChartController">
+      fx:controller="com.fs.sudoku.Frontend.ChartController">
 </VBox>

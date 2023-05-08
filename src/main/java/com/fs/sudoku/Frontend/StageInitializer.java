@@ -1,6 +1,6 @@
-package com.fs.sudoku;
+package com.fs.sudoku.Frontend;
 
-import com.fs.sudoku.UIApplication.StageReadyEvent;
+import com.fs.sudoku.Frontend.UIApplication.StageReadyEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -34,7 +34,7 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
         Stage stage = event.getStage();
         stage.setScene(new Scene(parent,800,600));
         stage.setTitle(applicationTitle);
-        stage.show();
+//        stage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -1,5 +1,6 @@
-package com.fs.sudoku;
+package com.fs.sudoku.Frontend;
 
+import com.fs.sudoku.SudokuApplication;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.springframework.boot.builder.SpringApplicationBuilder;

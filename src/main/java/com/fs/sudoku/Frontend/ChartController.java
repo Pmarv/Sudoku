@@ -1,4 +1,4 @@
-package com.fs.sudoku;
+package com.fs.sudoku.Frontend;
 
 import org.springframework.stereotype.Component;
 
