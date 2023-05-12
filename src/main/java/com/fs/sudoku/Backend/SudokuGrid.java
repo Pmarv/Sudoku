@@ -48,7 +48,7 @@ public class SudokuGrid {
 
     /**
      * takes a set of coordinates and gives back the associated value
-     * @param key Pair of Integers are given that correspond to coordinates in the grid
+     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @return returns the value at the given coordinates
      */
     public int getValue(Pair<Integer,Integer> key) {
@@ -57,7 +57,7 @@ public class SudokuGrid {
 
     /**
      * takes a set of coordinates and their corresponding value to set in the grid
-     * @param key Pair of Integers are given that correspond to coordinates in the grid
+     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @param value An Integer value that should be set for the coordinates given
      */
     public void setValue(Pair<Integer,Integer> key, Integer value) {
@@ -68,7 +68,7 @@ public class SudokuGrid {
     }
 
     /**
-     * @param key Pair of Integers are given that correspond to coordinates in the grid
+     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @return returns the values of all points on the same row as the key
      */
     public List<Integer> getRow(Pair<Integer,Integer> key) {
@@ -81,7 +81,7 @@ public class SudokuGrid {
     }
 
     /**
-     * @param key Pair of Integers are given that correspond to coordinates in the grid
+     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @return returns the values of all points on the same column as the key
      */
     public List<Integer> getColumn(Pair<Integer,Integer> key) {
@@ -94,7 +94,7 @@ public class SudokuGrid {
     }
 
     /**
-     * @param key Pair of Integers are given that correspond to coordinates in the grid
+     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @return returns the subgrid of the given key
      */
     public Integer getSubGrid(Pair<Integer,Integer> key) {
@@ -105,7 +105,8 @@ public class SudokuGrid {
     }
 
     /**
-     * @param key Pair of Integers are given that correspond to coordinates in the grid
+     * Validates the row of the given key by looking if there are any duplicates
+     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @return returns false if there is a duplicate number in the row, returns true if there is no duplicated number
      */
     private boolean validateRow(Pair<Integer,Integer> key) {
@@ -125,7 +126,8 @@ public class SudokuGrid {
     }
 
     /**
-     * @param key Pair of Integers are given that correspond to coordinates in the grid
+     * Validates the Column of the given key by looking if there are any duplicates
+     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @return returns false if there is a duplicate number in the column, returns true if there is no duplicated number
      */
     private boolean validateColumn(Pair<Integer,Integer> key) {
@@ -145,7 +147,8 @@ public class SudokuGrid {
     }
 
     /**
-     * @param key returns false if there is a duplicate number in the row, returns true if there is no duplicated number
+     * Validates the subGrid of the given key by looking if there are any duplicates
+     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @return returns false if there is a duplicate number in the subgrid, returns true if there is no duplicated number
      */
     private boolean validateSubGrid(Pair<Integer,Integer> key) {
@@ -168,6 +171,7 @@ public class SudokuGrid {
     }
 
     /**
+     *
      * @param key returns false if there is a duplicate number in the row, returns true if there is no duplicated number
      * @return returns the result of all other validation methods and short circuits if one of them returns false
      */

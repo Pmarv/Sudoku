@@ -34,7 +34,7 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
         Stage stage = event.getStage();
         stage.setScene(new Scene(parent,800,600));
         stage.setTitle(applicationTitle);
-//        stage.show();
+        stage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

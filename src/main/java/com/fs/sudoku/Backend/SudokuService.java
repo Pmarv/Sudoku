@@ -10,6 +10,8 @@ public class SudokuService implements CommandLineRunner {
 
     SudokuGrid sudokuGrid = new SudokuGrid();
 
+
+
     @Override
     public void run(String... args) {
         for(int i = 1; i < 10; i++) {
