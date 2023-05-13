@@ -1,18 +1,17 @@
 package com.fs.sudoku.Backend;
 
-import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @Service
 public class SudokuService implements CommandLineRunner {
 
 
     SudokuGrid sudokuGrid = new SudokuGrid();
+
 
     @Autowired
     Exact_Cover_solver exactCoverSolver;
@@ -28,28 +27,37 @@ public class SudokuService implements CommandLineRunner {
 //            }
 //        }
 //        int[][] test = {
-//                {0,0,1,0,1,1,0},
-//                {1,0,0,1,0,0,1},
-//                {0,1,1,0,0,1,0},
-//                {1,0,0,1,0,0,0},
-//                {0,1,0,0,0,0,1},
-//                {0,0,0,1,1,0,1},
-//                {1,0,0,1,0,0,0}
+//                {0,0,1,0,1,1,0,0},
+//                {1,0,0,1,0,0,1,0},
+//                {0,1,1,0,0,1,0,0},
+//                {1,0,0,1,0,0,0,0},
+//                {0,1,0,0,0,0,1,0},
+//                {0,0,0,1,1,0,1,0},
+//                {0,0,0,0,0,0,0,0}
 //        };
 //        exactCoverSolver.solve(test);
 //        System.out.println("test");
-        Pair<Integer,Integer> key = new Pair<>(0,0);
-        sudokuGrid.setValue(key,1);
-        Pair<Integer,Integer> key1 = new Pair<>(1,1);
-        sudokuGrid.setValue(key,1);
-        Pair<Integer,Integer> key2 = new Pair<>(1,0);
-        sudokuGrid.setValue(key,2);
-//        try {
-//            int[][] matrix = exactCoverSolver.sudokuToCover(sudokuGrid.getSudokuGrid());
-//            exactCoverSolver.solve(matrix);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+        int[][]test2 = {
+                {0,0,0,0,7,4,0,0,5},
+                {0,0,0,0,0,0,2,0,0},
+                {0,0,0,3,0,5,0,7,6},
+                {0,0,9,4,0,2,0,8,0},
+                {1,8,0,0,6,0,0,0,0},
+                {0,3,0,0,0,0,0,0,0},
+                {2,0,0,5,0,0,8,0,0},
+                {3,5,0,0,0,1,0,0,0},
+                {0,0,8,0,0,0,9,0,0}
+        };
+        sudokuGrid.intArrayToSudoku(test2);
+        exactCoverSolver.printGrid(sudokuGrid.getSudokuGrid());
+//        System.out.println("test");
+        try {
+            int[][] matrix = exactCoverSolver.sudokuToCover(sudokuGrid.getSudokuGrid());
+            System.out.println("test");
+            exactCoverSolver.solve(matrix);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }

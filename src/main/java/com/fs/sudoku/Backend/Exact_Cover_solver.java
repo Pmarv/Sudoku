@@ -5,14 +5,12 @@ import org.javatuples.Pair;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class Exact_Cover_solver {
 
-    Map<Integer,Node> currentSolution = new HashMap<>();
+    List<Node> currentSolution = new ArrayList<>();
 
     Root root;
 
@@ -22,32 +20,37 @@ public class Exact_Cover_solver {
 //    paper and pseudocode at https://www.ocf.berkeley.edu/~jchu/publicportal/sudoku/0011047.pdf
     private void search(int k) {
         if(root.right == root) {
-            for(Node solutionRow:currentSolution.values()) {
-                System.out.println(solutionRow.getCurrentSolution());
-            }
+             printGrid(nodeToSolution(currentSolution));
         } else {
-            System.out.println("Search: " + k);
+//            System.out.println("Search: " + k);
             Column c = root.findMinColumn();
             c.coverColumn();
+//            System.out.println("covering column: " + c.columnName);
             for(Node r = c.down; r != c; r = r.down) {
-                currentSolution.put(k,r);
+                currentSolution.add(r);
                 for(Node j = r.right;r != j; j = j.right) {
                     j.column.coverColumn();
+//                    System.out.println("covering column: " + j.column.columnName);
                 }
                 search(k + 1);
-                r = currentSolution.get(k);
+                r = currentSolution.remove(currentSolution.size()-1);
                 c = r.column;
                 for(Node j = r.left;j != r; j = j.left) {
                     j.column.uncoverColumn();
+//                    System.out.println("uncovering column: " + j.column.columnName);
                 }
             }
             c.uncoverColumn();
+//            System.out.println("uncovering column: " + c.columnName);
         }
+
     }
 
     /**
      * this first turns a given problem into a quad linked list and then solves it using Knuth's Algorithm X and Dancing Links
+     *
      * @param matrix an exact cover problem in form of a double int array filled with 1s and 0s
+     *
      */
     public void solve(int[][] matrix) {
         setUpProblem(matrix);
@@ -66,7 +69,7 @@ public class Exact_Cover_solver {
                 root = new Root("Root");
                 lastColumn = root;
             } else {
-                lastColumn.right = new Column(Integer.toString(i));
+                lastColumn.right = new Column(Integer.toString(i-1));
                 lastColumn.right.left = lastColumn;
                 lastColumn = lastColumn.right;
             }
@@ -147,24 +150,78 @@ public class Exact_Cover_solver {
             count2 = 0;
             count++;
         }
-        for (int i = 0; i <9; i++) {
-            for (int j = 0; j < 9; j++) {
-                Pair<Integer,Integer> key = new Pair<>(i,j);
-                if(grid.get(key) !=null) {
-                    int row = grid.get(key) + 81 * i-1;
-                    int column = grid.get(key);
-                    int rowStart = 81 * i;
-                    int currentRow = rowStart;
-                    for (int k = 0; k < 9; k++) {
-                        if (currentRow != row) {
+        for (int row = 1; row <= 9; row++) {
+            for (int column = 1; column <= 9; column++) {
+                Pair<Integer,Integer> key = new Pair<>(row,column);
+                if(grid.get(key) !=0) {
+                    int rowindex = (grid.get(key)-1) + 81 * (row-1)+9*(column-1);
+                    for (int k = 1; k <= 9; k++) {
+                    int currentRow = (k-1) + 81 * (row-1)+9*(column-1);
+                        if (currentRow != rowindex) {
                             Arrays.fill(problem[currentRow],0);
                         }
-                        currentRow++;
+
                     }
                 }
             }
 
         }
         return problem;
+    }
+    private Map<Pair<Integer,Integer>,Integer> nodeToSolution(List<Node> currentSolution) {
+        Map<Pair<Integer,Integer>,Integer> result= new TreeMap<>();
+        for(Node node:currentSolution) {
+            Node r = node;
+            int minColumn = Integer.parseInt(r.column.columnName);
+            for(Node j = node.right;j != node; j = j.right) {
+                int column = Integer.parseInt(j.column.columnName);
+                if(column < minColumn) {
+                    minColumn = column;
+                    r = j;
+                }
+            }
+            int test = Integer.parseInt(r.column.columnName);
+            int test2 = Integer.parseInt(r.right.column.columnName);
+            int row = test / 9;
+            int col = test % 9;
+            int num = (test2 % 9) +1;
+            Pair<Integer,Integer> key = new Pair<>(row,col);
+            result.put(key,num);
+//            System.out.println("Row: " + row + " Col: " + col + " Num: " + num);
+        }
+        return result;
+    }
+    public void printGrid(Map<Pair<Integer,Integer>,Integer> grid) {
+        Collection<Integer> gridValues = grid.values();
+        Object[] array = gridValues.toArray();
+        StringBuilder str = new StringBuilder();
+        int counter = 0;
+        int rowCounter = 1;
+        for(Object value : array) {
+            switch (counter) {
+                case 3, 6 -> {
+                    str.append("|");
+                    str.append(" ");
+                    str.append(value);
+                    str.append(" ");
+                    counter++;
+                }
+                case 8 -> {
+                    str.append(value);
+                    str.append("\n");
+                    if (rowCounter == 3 || rowCounter == 6) {
+                        str.append("--------------------- \n");
+                    }
+                    rowCounter++;
+                    counter = 0;
+                }
+                default -> {
+                    str.append(value);
+                    str.append(" ");
+                    counter++;
+                }
+            }
+        }
+        System.out.println(str);
     }
 }
