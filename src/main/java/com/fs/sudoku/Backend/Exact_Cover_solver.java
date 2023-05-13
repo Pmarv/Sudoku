@@ -1,8 +1,11 @@
 package com.fs.sudoku.Backend;
 
+import com.google.common.base.Splitter;
 import org.javatuples.Pair;
 import org.springframework.stereotype.Component;
 
+import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,9 +126,45 @@ public class Exact_Cover_solver {
         System.out.println();
     }
 
-    public int[][] sudokuToCover(Map<Pair<Integer,Integer>,Integer> grid) {
-        int[][] problem = new int[324][729];
+    public int[][] sudokuToCover(
+            Map<Pair<Integer,Integer>,Integer> grid
+    ) throws IOException {
+        String test;
+        int count = 0;
+        int count2 = 0;
+        int[][] problem = new int[729][324];
+        File matrix = new File("9x9 cover matrix.txt");
+        BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(matrix)));
+        while(count < 729) {
+            test = r.readLine();
+            String[] test2 = test.split(" ");
+            String test3 = test2[1];
+            Iterable<String> help = Splitter.fixedLength(1).split(test3);
+            for(String testing : help) {
+                problem[count][count2] = Integer.parseInt(testing);
+                count2++;
+            }
+            count2 = 0;
+            count++;
+        }
+        for (int i = 0; i <9; i++) {
+            for (int j = 0; j < 9; j++) {
+                Pair<Integer,Integer> key = new Pair<>(i,j);
+                if(grid.get(key) !=null) {
+                    int row = grid.get(key) + 81 * i-1;
+                    int column = grid.get(key);
+                    int rowStart = 81 * i;
+                    int currentRow = rowStart;
+                    for (int k = 0; k < 9; k++) {
+                        if (currentRow != row) {
+                            Arrays.fill(problem[currentRow],0);
+                        }
+                        currentRow++;
+                    }
+                }
+            }
 
+        }
         return problem;
     }
 }

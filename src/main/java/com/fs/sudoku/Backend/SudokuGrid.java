@@ -15,8 +15,8 @@ public class SudokuGrid {
     private Map<Pair<Integer,Integer>,Integer> subGridCoordinates = new TreeMap<>();
 
     public void generateEmptyGrid() {
-        for(int i = 1; i < 10; i++) {
-            for(int j = 1; j < 10; j++) {
+        for(int i = 0; i < 9; i++) {
+            for(int j = 0; j < 9; j++) {
                 key = new Pair<>(i, j);
                 sudokuGrid.put(key,0);
             }
@@ -27,21 +27,21 @@ public class SudokuGrid {
      * populates the subGridCoordinates map with the coordinates of the subgrid
      */
     private void populateSubGridCoordinates() {
-        int subGrid = 1;
-            for(int y=1;y<4;y++) {
-                for(int x=1;x<4;x++) {
+        int subGrid = 0;
+            for(int y=0;y<4;y++) {
+                for(int x=0;x<4;x++) {
                     key = new Pair<>(x,y);
                     subGridCoordinates.put(key,subGrid++);
                 }
             }
-//        System.out.println(subGridCoordinates);
+        System.out.println(subGridCoordinates);
     }
 
     /**
      * constructor for the grid which also calls populateSubGridCoordinates
      */
     public SudokuGrid(){
-//        generateEmptyGrid();
+//      generateEmptyGrid();
         populateSubGridCoordinates();
     }
 
@@ -73,7 +73,7 @@ public class SudokuGrid {
      */
     public List<Integer> getRow(Pair<Integer,Integer> key) {
         List<Integer> result = new ArrayList<>();
-        for(int j=1;j<10;j++) {
+        for(int j=0;j<9;j++) {
             key = new Pair<>(j,key.getValue1());
             result.add(sudokuGrid.get(key));
         }
@@ -86,7 +86,7 @@ public class SudokuGrid {
      */
     public List<Integer> getColumn(Pair<Integer,Integer> key) {
         List<Integer> result = new ArrayList<>();
-        for(int j=1;j<10;j++) {
+        for(int j=0;j<9;j++) {
             key = new Pair<>(key.getValue0(),j);
             result.add(sudokuGrid.get(key));
         }
