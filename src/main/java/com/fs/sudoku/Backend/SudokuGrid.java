@@ -12,37 +12,34 @@ import java.util.*;
 public class SudokuGrid {
     private Map<Pair<Integer,Integer>, Integer> sudokuGrid = new TreeMap<>();
     private Pair<Integer,Integer> key;
-    private Map<Pair<Integer,Integer>,Integer> subGridCoordinates = new TreeMap<>();
+    private SudokuValidator sudokuValidator;
+
 
     public void generateEmptyGrid() {
-        for(int i = 1; i <= 9; i++) {
-            for(int j = 1; j <= 9; j++) {
+        for(int i = 0; i < 9; i++) {
+            for(int j = 0; j < 9; j++) {
                 key = new Pair<>(i, j);
                 sudokuGrid.put(key,0);
             }
+        }
+    }
+    public void setSudokuGrid(Map<Pair<Integer,Integer>,Integer> grid) {
+        this.generateEmptyGrid();
+        for(Pair<Integer,Integer> key : grid.keySet()) {
+            this.setValue(key,grid.get(key));
         }
     }
 
     /**
      * populates the subGridCoordinates map with the coordinates of the subgrid
      */
-    private void populateSubGridCoordinates() {
-        int subGrid = 0;
-            for(int y=1;y<4;y++) {
-                for(int x=1;x<4;x++) {
-                    key = new Pair<>(x,y);
-                    subGridCoordinates.put(key,subGrid++);
-                }
-            }
-//        System.out.println(subGridCoordinates);
-    }
+
 
     /**
      * constructor for the grid which also calls populateSubGridCoordinates
      */
     public SudokuGrid(){
 //      generateEmptyGrid();
-        populateSubGridCoordinates();
     }
 
 
@@ -52,7 +49,12 @@ public class SudokuGrid {
      * @return returns the value at the given coordinates
      */
     public int getValue(Pair<Integer,Integer> key) {
+        if(key.getValue1() < 9  && key.getValue0() < 9) {
         return sudokuGrid.get(key);
+        }
+        else {
+            return 0;
+        }
     }
 
     /**
@@ -63,17 +65,17 @@ public class SudokuGrid {
     public void setValue(Pair<Integer,Integer> key, Integer value) {
         if(value < 10 && value > 0) {
         sudokuGrid.put(key,value);
-//        System.out.println(validateNumberSet(key));
         }
+
     }
 
     /**
      * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @return returns the values of all points on the same row as the key
      */
-    public List<Integer> getRow(Pair<Integer,Integer> key) {
+    public List<Integer> getColumn(Pair<Integer,Integer> key) {
         List<Integer> result = new ArrayList<>();
-        for(int j=1;j<=9;j++) {
+        for(int j=0;j<9;j++) {
             key = new Pair<>(j,key.getValue1());
             result.add(sudokuGrid.get(key));
         }
@@ -84,9 +86,9 @@ public class SudokuGrid {
      * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @return returns the values of all points on the same column as the key
      */
-    public List<Integer> getColumn(Pair<Integer,Integer> key) {
+    public List<Integer> getRow(Pair<Integer,Integer> key) {
         List<Integer> result = new ArrayList<>();
-        for(int j=1;j<=9;j++) {
+        for(int j=0;j<9;j++) {
             key = new Pair<>(key.getValue0(),j);
             result.add(sudokuGrid.get(key));
         }
@@ -98,109 +100,64 @@ public class SudokuGrid {
      * @return returns the subgrid of the given key
      */
     public Integer getSubGrid(Pair<Integer,Integer> key) {
-        int x = key.getValue0();
-        int y = key.getValue1();
-        Pair<Integer,Integer> subGridKey = new Pair<>((int) Math.ceil((float) x /3),(int) Math.ceil((float) y /3));
-        return subGridCoordinates.get(subGridKey);
+        int row = key.getValue0();
+        int col = key.getValue1();
+        return col /3 + row - row % 3;
     }
 
-    /**
-     * Validates the row of the given key by looking if there are any duplicates
-     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
-     * @return returns false if there is a duplicate number in the row, returns true if there is no duplicated number
-     */
-    private boolean validateRow(Pair<Integer,Integer> key) {
-        List<Integer> row = getRow(key);
-        List<Integer> validatedRow = new ArrayList<>();
-        for(Integer value : row) {
-            if(value == null) {
-                continue;
-            }
-            if(!validatedRow.contains(value)) {
-                validatedRow.add(value);
-            } else {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Validates the Column of the given key by looking if there are any duplicates
-     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
-     * @return returns false if there is a duplicate number in the column, returns true if there is no duplicated number
-     */
-    private boolean validateColumn(Pair<Integer,Integer> key) {
-        List<Integer> column = getColumn(key);
-        List<Integer> validatedColumn = new ArrayList<>();
-        for(Integer value : column) {
-            if(value == null) {
-                continue;
-            }
-            if(!validatedColumn.contains(value)) {
-                validatedColumn.add(value);
-            } else {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Validates the subGrid of the given key by looking if there are any duplicates
-     * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
-     * @return returns false if there is a duplicate number in the subgrid, returns true if there is no duplicated number
-     */
-    private boolean validateSubGrid(Pair<Integer,Integer> key) {
-        Set<Integer> subGridValues = new HashSet<>();
-        Set<Pair<Integer,Integer>> subGridKeys = new HashSet<>();
-        subGridKeys.add(key);
-        int keySubGrid = getSubGrid(key);
-        for(Pair<Integer,Integer> test : sudokuGrid.keySet()) {
-            int tempSubGrid = getSubGrid(test);
-            if(keySubGrid == tempSubGrid) {
-                subGridKeys.add(test);
-            }
-        }
-        for(Pair<Integer,Integer> subGridKey : subGridKeys) {
-               if(!subGridValues.add(sudokuGrid.get(subGridKey))) {
-                   return false;
-               }
-        }
-        return true;
-    }
 
     public void intArrayToSudoku(int[][] array) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                Pair<Integer,Integer> key = new Pair<>(i+1,j+1);
+                Pair<Integer,Integer> key = new Pair<>(i,j);
                 sudokuGrid.put(key,array[i][j]);
             }
         }
     }
 
-    /**
-     *
-     * @param key returns false if there is a duplicate number in the row, returns true if there is no duplicated number
-     * @return returns the result of all other validation methods and short circuits if one of them returns false
-     */
-    public boolean validateNumberSet(Pair<Integer,Integer> key) {
-        return validateColumn(key) && validateRow(key) && validateSubGrid(key);
-    }
+
+
 
     public void printGrid() {
-        Collection<Integer> test = this.getSudokuGrid().values();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
+        Collection<Integer> gridValues = sudokuGrid.values();
+        Object[] array = gridValues.toArray();
+        StringBuilder str = new StringBuilder();
+        int counter = 0;
+        int rowCounter = 1;
+        for(Object value : array) {
+            switch (counter) {
+                case 3, 6 -> {
+                    str.append("|");
+                    str.append(" ");
+                    str.append(value);
+                    str.append(" ");
+                    counter++;
+                }
+                case 8 -> {
+                    str.append(value);
+                    str.append("\n");
+                    if (rowCounter == 3 || rowCounter == 6) {
+                        str.append("--------------------- \n");
+                    }
+                    rowCounter++;
+                    counter = 0;
+                }
+                default -> {
+                    str.append(value);
+                    str.append(" ");
+                    counter++;
+                }
+            }
+        }
+        System.out.println(str);
+    }
+    public boolean isComplete() {
+        sudokuValidator = new SudokuValidator();
+        for (Integer value:sudokuGrid.values()) {
+            if(value == 0) {
+                return false;
+            }
+        }
+        return sudokuValidator.validate(this);
     }
 }

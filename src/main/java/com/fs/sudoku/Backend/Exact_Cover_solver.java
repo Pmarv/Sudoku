@@ -1,27 +1,44 @@
 package com.fs.sudoku.Backend;
 
 import com.google.common.base.Splitter;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.javatuples.Pair;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.*;
 
+@Getter @Setter
 @Component
+@NoArgsConstructor
 public class Exact_Cover_solver {
 
     List<Node> currentSolution = new ArrayList<>();
+    List<Node> currentSolutionCopy;
+    private  SudokuGrid solvedGrid = new SudokuGrid();
+    private  SudokuGrid partialSolvedGrid = new SudokuGrid();
 
     Root root;
+
+    int solutions = 0;
 
 
 
 //    Implementation of Knuth's Algorithm X with Dancing Links
 //    paper and pseudocode at https://www.ocf.berkeley.edu/~jchu/publicportal/sudoku/0011047.pdf
-    private void search(int k) {
+    private void search(int k,boolean partial) {
         if(root.right == root) {
-             printGrid(nodeToSolution(currentSolution));
-        } else {
+            if(partial){
+            partialSolvedGrid.setSudokuGrid(nodeToPartialSolution(currentSolution));
+            } else {
+            solvedGrid.setSudokuGrid(nodeToSolution(currentSolution));
+            }
+//            partialSolvedGrid.printGrid();
+//             solvedGrid.printGrid();
+             solutions++;
+        } else if (solutions < 2) {
 //            System.out.println("Search: " + k);
             Column c = root.findMinColumn();
             c.coverColumn();
@@ -32,7 +49,7 @@ public class Exact_Cover_solver {
                     j.column.coverColumn();
 //                    System.out.println("covering column: " + j.column.columnName);
                 }
-                search(k + 1);
+                search(k + 1,partial);
                 r = currentSolution.remove(currentSolution.size()-1);
                 c = r.column;
                 for(Node j = r.left;j != r; j = j.left) {
@@ -52,9 +69,10 @@ public class Exact_Cover_solver {
      * @param matrix an exact cover problem in form of a double int array filled with 1s and 0s
      *
      */
-    public void solve(int[][] matrix) {
+    public void solve(int[][] matrix,boolean partial) {
         setUpProblem(matrix);
-        search(0);
+        search(0,partial);
+        root = null;
     }
 
     private void setUpProblem(int[][] test) {
@@ -119,25 +137,28 @@ public class Exact_Cover_solver {
                 lastNodeTouched = lastColumn;
 
             }
-            assert lastRowNodeTouched != null;
+            if (lastRowNodeTouched != null) {
             lastRowNodeTouched.right = firstRowNode;
             firstRowNode.left = lastRowNodeTouched;
+            }
             lastColumn = root.right;
             lastNodeTouched = lastColumn;
             countRowNodes = 0;
         }
-        System.out.println();
+//        System.out.println();
     }
 
     public int[][] sudokuToCover(
             Map<Pair<Integer,Integer>,Integer> grid
-    ) throws IOException {
+    ){
         String test;
         int count = 0;
         int count2 = 0;
         int[][] problem = new int[729][324];
         File matrix = new File("9x9 cover matrix.txt");
-        BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(matrix)));
+        BufferedReader r = null;
+        try {
+            r = new BufferedReader(new InputStreamReader(new FileInputStream(matrix)));
         while(count < 729) {
             test = r.readLine();
             String[] test2 = test.split(" ");
@@ -150,9 +171,13 @@ public class Exact_Cover_solver {
             count2 = 0;
             count++;
         }
+        r.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         for (int row = 1; row <= 9; row++) {
             for (int column = 1; column <= 9; column++) {
-                Pair<Integer,Integer> key = new Pair<>(row,column);
+                Pair<Integer,Integer> key = new Pair<>(row-1,column-1);
                 if(grid.get(key) !=0) {
                     int rowindex = (grid.get(key)-1) + 81 * (row-1)+9*(column-1);
                     for (int k = 1; k <= 9; k++) {
@@ -191,37 +216,19 @@ public class Exact_Cover_solver {
         }
         return result;
     }
-    public void printGrid(Map<Pair<Integer,Integer>,Integer> grid) {
-        Collection<Integer> gridValues = grid.values();
-        Object[] array = gridValues.toArray();
-        StringBuilder str = new StringBuilder();
-        int counter = 0;
-        int rowCounter = 1;
-        for(Object value : array) {
-            switch (counter) {
-                case 3, 6 -> {
-                    str.append("|");
-                    str.append(" ");
-                    str.append(value);
-                    str.append(" ");
-                    counter++;
-                }
-                case 8 -> {
-                    str.append(value);
-                    str.append("\n");
-                    if (rowCounter == 3 || rowCounter == 6) {
-                        str.append("--------------------- \n");
-                    }
-                    rowCounter++;
-                    counter = 0;
-                }
-                default -> {
-                    str.append(value);
-                    str.append(" ");
-                    counter++;
-                }
+    public Map<Pair<Integer,Integer>,Integer> nodeToPartialSolution(List<Node> currentSolution) {
+        currentSolutionCopy = new ArrayList<>(currentSolution);
+        Map<Pair<Integer,Integer>,Integer> result;
+        Set<Node> partialSolutionSet = new HashSet<>();
+        for (int i = 0; i < 30; i++) {
+            int randomIndex = (int) (Math.random()*100);
+            while ( randomIndex >= currentSolution.size() || !partialSolutionSet.add(currentSolution.get(randomIndex))) {
+                randomIndex = (int) (Math.random()*100);
             }
         }
-        System.out.println(str);
+        List<Node> partialSolution = new ArrayList<>(partialSolutionSet);
+        result = nodeToSolution(partialSolution);
+        return result;
     }
+
 }
