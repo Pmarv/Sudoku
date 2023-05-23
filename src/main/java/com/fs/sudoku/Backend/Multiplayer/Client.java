@@ -36,7 +36,7 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
-    public boolean connectToOtherClient(String code) throws IOException {
+    public void connectToOtherClient(String code) throws IOException {
         try {
             serverIp = InetAddress.getByName("206.189.251.215");
             tcpSocket = new Socket(serverIp,5000);
@@ -46,18 +46,21 @@ public class Client {
             throw new RuntimeException(e);
         }
         udpSocket = new DatagramSocket();
+        System.out.println(uuidString);
         sendInitialUDPPacket(uuidString,code);
         while(!gotResponse) {
             String response = tcpIn.readLine();
             String[] responseParts = response.split("&&");
             otherClientIP = responseParts[0];
             otherClientPort = responseParts[1];
-            System.out.println(otherClientIP + otherClientPort);
+            String otherClientUUID = responseParts[2];
+            System.out.println(otherClientIP + " "+ otherClientPort);
+            System.out.println(otherClientUUID);
             gotResponse = true;
         }
-        udpSocket.close();
-        tcpIn.close();
+        UdpHandlingThread u = new UdpHandlingThread(udpSocket,otherClientIP,otherClientPort);
+        new Thread(u).start();
         tcpSocket.close();
-        return true;
+
     }
 }
