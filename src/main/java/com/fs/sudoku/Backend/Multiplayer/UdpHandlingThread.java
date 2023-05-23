@@ -26,7 +26,7 @@ public class UdpHandlingThread implements Runnable{
             dgSocket.send(dgPacketSend);
             while(true) {
                 dgSocket.receive(dgPacketReceive);
-                String message = Arrays.toString(dgPacketReceive.getData());
+                String message = new String(dgPacketReceive.getData());
                 System.out.println("got Message: " + message.trim());
                 try {
                     Thread.sleep(1000);
