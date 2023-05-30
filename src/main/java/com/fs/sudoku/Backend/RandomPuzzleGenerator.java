@@ -12,8 +12,10 @@ import java.util.TreeMap;
 public class RandomPuzzleGenerator {
 
     SudokuGrid sudokuGrid = new SudokuGrid();
-    Exact_Cover_solver exactCoverSolver = new Exact_Cover_solver();
+    Exact_Cover_solver exactCoverSolver;
+    SudokuValidator sudokuValidator = new SudokuValidator();
     public Map<Pair<Integer,Integer>,Integer> generateRandomPuzzle() {
+        int attempts = 0;
         exactCoverSolver = new Exact_Cover_solver();
         sudokuGrid.generateEmptyGrid();
         while (exactCoverSolver.getSolutions() < 1) {
@@ -22,7 +24,10 @@ public class RandomPuzzleGenerator {
                 while (key.contains(9)) {
                     key = new Pair<>((int) (Math.random() * 10), (int) (Math.random() * 10));
                 }
-                sudokuGrid.setValue(key, (int) (Math.random() * 10));
+                int value = (int) (Math.random() * 10);
+                if(sudokuValidator.validateGrid(sudokuGrid.getSudokuGrid(),key,value)) {
+                sudokuGrid.setValue(key,value);
+                }
             }
             int[][] cover = exactCoverSolver.sudokuToCover(sudokuGrid.getSudokuGrid());
             exactCoverSolver.solve(cover, true);
@@ -31,7 +36,8 @@ public class RandomPuzzleGenerator {
         exactCoverSolver.setSolutions(0);
         SudokuGrid tempGrid = sudokuGrid;
 //        tempGrid.printGrid();
-        while (exactCoverSolver.getSolutions() != 1) {
+
+        while (exactCoverSolver.getSolutions() != 1 && attempts < 40) {
             exactCoverSolver.setSolutions(0);
             int[][] coverNew = exactCoverSolver.sudokuToCover(tempGrid.getSudokuGrid());
             exactCoverSolver.solve(coverNew,false);
@@ -40,6 +46,10 @@ public class RandomPuzzleGenerator {
                 tempGrid.setSudokuGrid(exactCoverSolver.nodeToPartialSolution(exactCoverSolver.getCurrentSolutionCopy()));
 //                tempGrid.printGrid();
             }
+            attempts++;
+        }
+        if(attempts > 39) {
+            return generateRandomPuzzle();
         }
         exactCoverSolver.getSolvedGrid().printGrid();
         return tempGrid.getSudokuGrid();

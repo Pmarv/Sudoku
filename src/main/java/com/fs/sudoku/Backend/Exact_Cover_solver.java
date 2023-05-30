@@ -2,7 +2,6 @@ package com.fs.sudoku.Backend;
 
 import com.google.common.base.Splitter;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.javatuples.Pair;
 import org.springframework.stereotype.Component;
@@ -12,18 +11,22 @@ import java.util.*;
 
 @Getter @Setter
 @Component
-@NoArgsConstructor
 public class Exact_Cover_solver {
 
     List<Node> currentSolution = new ArrayList<>();
     List<Node> currentSolutionCopy;
     private  SudokuGrid solvedGrid = new SudokuGrid();
     private  SudokuGrid partialSolvedGrid = new SudokuGrid();
+    private int[][] problem = new int[729][324];
+    private int[][] problemCopy;
 
     Root root;
 
     int solutions = 0;
 
+    public Exact_Cover_solver() {
+        parseMatrixFile();
+    }
 
 
 //    Implementation of Knuth's Algorithm X with Dancing Links
@@ -32,13 +35,17 @@ public class Exact_Cover_solver {
         if(root.right == root) {
             if(partial){
             partialSolvedGrid.setSudokuGrid(nodeToPartialSolution(currentSolution));
+//                System.out.println(solutions);
             } else {
             solvedGrid.setSudokuGrid(nodeToSolution(currentSolution));
+//                System.out.println(solutions);
             }
 //            partialSolvedGrid.printGrid();
 //             solvedGrid.printGrid();
              solutions++;
-        } else if (solutions < 2) {
+        } else
+            if (solutions < 2)
+            {
 //            System.out.println("Search: " + k);
             Column c = root.findMinColumn();
             c.coverColumn();
@@ -148,33 +155,8 @@ public class Exact_Cover_solver {
 //        System.out.println();
     }
 
-    public int[][] sudokuToCover(
-            Map<Pair<Integer,Integer>,Integer> grid
-    ){
-        String test;
-        int count = 0;
-        int count2 = 0;
-        int[][] problem = new int[729][324];
-        File matrix = new File("9x9 cover matrix.txt");
-        BufferedReader r = null;
-        try {
-            r = new BufferedReader(new InputStreamReader(new FileInputStream(matrix)));
-        while(count < 729) {
-            test = r.readLine();
-            String[] test2 = test.split(" ");
-            String test3 = test2[1];
-            Iterable<String> help = Splitter.fixedLength(1).split(test3);
-            for(String testing : help) {
-                problem[count][count2] = Integer.parseInt(testing);
-                count2++;
-            }
-            count2 = 0;
-            count++;
-        }
-        r.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public int[][] sudokuToCover(Map<Pair<Integer,Integer>,Integer> grid){
+        problemCopy = Arrays.stream(problem).map(int[]::clone).toArray(int[][]::new);
         for (int row = 1; row <= 9; row++) {
             for (int column = 1; column <= 9; column++) {
                 Pair<Integer,Integer> key = new Pair<>(row-1,column-1);
@@ -183,15 +165,14 @@ public class Exact_Cover_solver {
                     for (int k = 1; k <= 9; k++) {
                     int currentRow = (k-1) + 81 * (row-1)+9*(column-1);
                         if (currentRow != rowindex) {
-                            Arrays.fill(problem[currentRow],0);
+                            Arrays.fill(problemCopy[currentRow],0);
                         }
-
                     }
                 }
             }
 
         }
-        return problem;
+        return problemCopy;
     }
     private Map<Pair<Integer,Integer>,Integer> nodeToSolution(List<Node> currentSolution) {
         Map<Pair<Integer,Integer>,Integer> result= new TreeMap<>();
@@ -229,6 +210,32 @@ public class Exact_Cover_solver {
         List<Node> partialSolution = new ArrayList<>(partialSolutionSet);
         result = nodeToSolution(partialSolution);
         return result;
+    }
+
+    private void parseMatrixFile() {
+        String line;
+        int count = 0;
+        int count2 = 0;
+        File matrix = new File("9x9 cover matrix.txt");
+        BufferedReader r;
+        try {
+            r = new BufferedReader(new InputStreamReader(new FileInputStream(matrix)));
+            while(count < 729) {
+                line = r.readLine();
+                String[] test2 = line.split(" ");
+                String test3 = test2[1];
+                Iterable<String> help = Splitter.fixedLength(1).split(test3);
+                for(String testing : help) {
+                    problem[count][count2] = Integer.parseInt(testing);
+                    count2++;
+                }
+                count2 = 0;
+                count++;
+            }
+            r.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

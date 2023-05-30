@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class UdpHandlingThread implements Runnable{
@@ -24,7 +25,6 @@ public class UdpHandlingThread implements Runnable{
             DatagramPacket dgPacketSend = new DatagramPacket(sendingBytes,sendingBytes.length, InetAddress.getByName(otherIp),Integer.parseInt(otherPort));
             DatagramPacket dgPacketReceive = new DatagramPacket(new byte[1024],1024);
             dgSocket.send(dgPacketSend);
-            while(true) {
                 dgSocket.receive(dgPacketReceive);
                 String message = new String(dgPacketReceive.getData());
                 System.out.println("got Message: " + message.trim());
@@ -33,8 +33,23 @@ public class UdpHandlingThread implements Runnable{
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                dgSocket.send(dgPacketSend);
-            }
+                ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES);
+                byteBuffer.putDouble((Math.random()*100));
+                byte[] sendingBytesShake = byteBuffer.array();
+                DatagramPacket dgPacketSendShake = new DatagramPacket(sendingBytesShake,sendingBytesShake.length, InetAddress.getByName(otherIp),Integer.parseInt(otherPort));
+                dgSocket.send(dgPacketSendShake);
+                while(true) {
+                    dgSocket.receive(dgPacketReceive);
+                    message = new String(dgPacketReceive.getData());
+                    System.out.println("got Message: " + message.trim());
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    dgSocket.send(dgPacketSend);
+                }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

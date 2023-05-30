@@ -1,11 +1,13 @@
 package com.fs.sudoku.Backend;
 
 import com.fs.sudoku.Backend.Multiplayer.Client;
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 @Service
 public class SudokuService implements CommandLineRunner {
@@ -24,7 +26,10 @@ public class SudokuService implements CommandLineRunner {
     @Override
     public void run(String... args)  {
 //        exactCoverSolver = new Exact_Cover_solver();
+//        long startTime = System.nanoTime();
 //        sudokuGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle());
+//        long entTime = System.nanoTime();
+//        System.out.println((entTime-startTime));
 //        Scanner input = new Scanner(System.in);
 //        System.out.println("Here is your Sudoku");
 //        sudokuGrid.printGrid();
