@@ -45,11 +45,11 @@ public class SudokuService implements CommandLineRunner {
 //            sudokuGrid.printGrid();
 //        }
 //        System.out.println("Congrats");
-        try {
-            client.connectToOtherClient("1234");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            client.connectToOtherClient("1234");
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 }
