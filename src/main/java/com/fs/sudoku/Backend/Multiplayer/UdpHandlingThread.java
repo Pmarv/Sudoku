@@ -33,9 +33,7 @@ public class UdpHandlingThread implements Runnable{
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES);
-                byteBuffer.putDouble((Math.random()*100));
-                byte[] sendingBytesShake = byteBuffer.array();
+                byte[] sendingBytesShake = Double.toString(Math.random()*100).getBytes();
                 DatagramPacket dgPacketSendShake = new DatagramPacket(sendingBytesShake,sendingBytesShake.length, InetAddress.getByName(otherIp),Integer.parseInt(otherPort));
                 dgSocket.send(dgPacketSendShake);
                 while(true) {
