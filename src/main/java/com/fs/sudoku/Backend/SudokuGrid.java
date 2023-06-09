@@ -13,14 +13,63 @@ public class SudokuGrid {
     private Map<Pair<Integer,Integer>, Integer> sudokuGrid = new TreeMap<>();
     private Pair<Integer,Integer> key;
     private SudokuValidator sudokuValidator;
+    private Timer timer;
+    private int seconds;
+    
+     /**
+     * starts the timer and adds one seconds as it runs
+     * after one second it reruns the method to add another second to the timer
+     */
+      public void startTimer() {
+         timer.scheduleAtFixedRate(new TimerTask() {
+             public void run() {
+                 seconds++;
+                 System.out.println("Time elapsed: " + seconds + " seconds");
+             }
+         }, 1000, 1000); 
+     }
+     
+     /**
+      * stops the timer
+      */
+     public void stopTimer(){
+         timer.cancel();
+     }
 
-
-    public void generateEmptyGrid() {
+    /**
+      * generates an empty grid with given difficulty mode
+      *
+      * @param difficulty represents the difficulty of the sudoku grid
+      *                   valid values: Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD
+      */ 
+    public void generateEmptyGrid(Difficulty difficulty) {
+        int numValuesToRemove = 0;
+        
+        switch (difficulty) {
+    	case EASY:
+    		numValuesToRemove = 40;
+    		break;
+    	case MEDIUM:
+    		numValuesToRemove = 50;
+    		break;
+    	case HARD:
+    		numValuesToRemove = 60;
+    		break;
+    	}
+        
         for(int i = 0; i < 9; i++) {
             for(int j = 0; j < 9; j++) {
                 key = new Pair<>(i, j);
                 sudokuGrid.put(key,0);
             }
+        }
+        
+        List<Pair<Integer, Integer>> keys = new ArrayList<>(sudokuGrid.keySet());
+        Collections.shuffle(keys);
+        
+        for (int k = 0; k < numValuesToRemove; k++) {
+        	Pair<Integer, Integer> keyToRemove = keys.get(k);
+        	sudokuGrid.remove(keyToRemove);
         }
     }
     public void setSudokuGrid(Map<Pair<Integer,Integer>,Integer> grid) {
