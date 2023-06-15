@@ -220,7 +220,7 @@ public class Exact_Cover_solver {
         currentSolutionCopy = new ArrayList<>(currentSolution);
         Map<Pair<Integer,Integer>,Integer> result;
         Set<Node> partialSolutionSet = new HashSet<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 78; i++) {
             int randomIndex = (int) (Math.random()*100);
             while ( randomIndex >= currentSolution.size() || !partialSolutionSet.add(currentSolution.get(randomIndex))) {
                 randomIndex = (int) (Math.random()*100);

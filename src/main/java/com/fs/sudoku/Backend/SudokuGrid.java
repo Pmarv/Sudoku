@@ -13,8 +13,6 @@ public class SudokuGrid {
     private Map<Pair<Integer,Integer>, Integer> sudokuGrid = new TreeMap<>();
     private Pair<Integer,Integer> key;
     private SudokuValidator sudokuValidator;
-
-
     public void generateEmptyGrid() {
         for(int i = 0; i < 9; i++) {
             for(int j = 0; j < 9; j++) {

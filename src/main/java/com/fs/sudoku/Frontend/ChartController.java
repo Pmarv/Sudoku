@@ -1,5 +1,7 @@
 package com.fs.sudoku.Frontend;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import javafx.scene.control.Button;
 import javafx.scene.Scene;
@@ -18,25 +20,37 @@ import java.io.IOException;
 public class ChartController {
     @FXML
     private Button Singleplayer;
+    @Value("classpath:/Singleplayer.fxml")
+    private Resource Test;
+    public static Scene scene;
+    @FXML
+    private void initialize() {
+        Singleplayer.setOnAction(this::handleButtonAction);
+    }
 
-        @FXML
-        private void initialize() {
-            Singleplayer.setOnAction(this::handleButtonAction);
-        }
+    public Resource getTest() {
+        return this.Test;
+    }
     private void handleButtonAction(ActionEvent event) {
         try {
-            // Load the FXML file for the new scene
-            System.out.println(getClass().getResource("../../../Singeplayer.fxml"));
-            Parent root = FXMLLoader.load(getClass().getResource("../../../Singeplayer.fxml"));
 
-            // Create the new scene and set it on the stage
-            Scene scene = new Scene(root);
+            System.out.println(Test.getURL());
+            FXMLLoader loader = new FXMLLoader(Test.getURL());
+            Parent root = loader.load();
+
+
+            scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
+            SingleplayerController controller = loader.getController();
+            controller.setScene(scene);
+            controller.init();
             stage.show();
         } catch (IOException e) {
-            // Handle the exception, e.g., show an error dialog
             e.printStackTrace();
         }
+
+
+
     }
 }
