@@ -3,10 +3,12 @@ package com.fs.sudoku.Backend;
 import com.fs.sudoku.Backend.Multiplayer.Client;
 import lombok.NoArgsConstructor;
 import org.javatuples.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@NoArgsConstructor
 @Component
 @NoArgsConstructor
 public class RandomPuzzleGenerator {

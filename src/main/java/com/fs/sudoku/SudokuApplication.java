@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SudokuApplication {
 
     public static void main(String[] args) {
-//        Application.launch(UIApplication.class, args);
-        SpringApplication.run(SudokuApplication.class);
+      Application.launch(UIApplication.class, args);
+        //SpringApplication.run(SudokuApplication.class);
     }
 
 }
