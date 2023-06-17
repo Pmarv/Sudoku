@@ -1,10 +1,14 @@
 package com.fs.sudoku.Backend;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.javatuples.Pair;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 @Component
@@ -157,5 +161,14 @@ public class SudokuGrid {
             }
         }
         return sudokuValidator.validate(this);
+    }
+    public String serialize() {
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
+        return gson.toJson(sudokuGrid);
+    }
+    public void deserializeToSudoku(String json) {
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
+        Type sudokuMapType = new TypeToken<Map<Pair<Integer,Integer>, Integer>>() {}.getType();
+        sudokuGrid = gson.fromJson(json,sudokuMapType);
     }
 }
