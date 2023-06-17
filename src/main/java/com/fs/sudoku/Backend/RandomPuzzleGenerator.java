@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@NoArgsConstructor
+
 @Component
 @NoArgsConstructor
 public class RandomPuzzleGenerator {

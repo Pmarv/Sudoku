@@ -19,38 +19,52 @@ import java.io.IOException;
 @Component
 public class ChartController {
     @FXML
+    public Button MultiplayerButton;
+    @FXML
     private Button Singleplayer;
+    @Value("classpath:/ChooseDifficulty.fxml")
+    private Resource DifficultyStage;
     @Value("classpath:/Singleplayer.fxml")
-    private Resource Test;
+    private Resource SinglepayerScene;
+    @Value("classpath:/MultiplayerCode.fxml")
+    private Resource MultiplayerCode;
     public static Scene scene;
     @FXML
     private void initialize() {
         Singleplayer.setOnAction(this::handleButtonAction);
+        MultiplayerButton.setOnAction(this::handleMultiplayerAction);
     }
 
-    public Resource getTest() {
-        return this.Test;
+    public Resource getDifficultyStage() {
+        return this.DifficultyStage;
     }
     private void handleButtonAction(ActionEvent event) {
         try {
-
-            System.out.println(Test.getURL());
-            FXMLLoader loader = new FXMLLoader(Test.getURL());
+            FXMLLoader loader = new FXMLLoader(DifficultyStage.getURL());
             Parent root = loader.load();
-
-
             scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
-            SingleplayerController controller = loader.getController();
-            controller.setScene(scene);
-            controller.init();
+            DifficultyController controller = loader.getController();
+            controller.setSingleplayer(SinglepayerScene);
+            controller.setPreviousScene(Singleplayer.getScene());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
+    }
+    private void handleMultiplayerAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(MultiplayerCode.getURL());
+            Parent root = loader.load();
+            scene = new Scene(root);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            MultiplayerCodeController controller = loader.getController();
+            controller.setPreviousScene(Singleplayer.getScene());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

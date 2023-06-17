@@ -38,7 +38,8 @@ public class IncomingUdpThread implements Runnable{
                     }
                 }
                 if(!Pattern.matches("[a-zA-Z]+", Message)) {
-                    Client.vsWinOrLose = Long.parseLong(Message.trim()) <= Client.timeTaken;
+                    Client.OpponentTime = Long.parseLong(Message.trim());
+                    Client.vsWinOrLose = Client.OpponentTime <= Client.timeTaken;
                 }
 
             }

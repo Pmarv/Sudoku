@@ -26,11 +26,11 @@ public class Client {
     private final RandomPuzzleGenerator randomPuzzleGenerator = new RandomPuzzleGenerator();
     private long startTime;
     public static boolean vsWinOrLose;
-    protected static long timeTaken;
+    public static long timeTaken;
     public static boolean coop;
     public static boolean lastPlayer;
-    protected static boolean first;
-
+    public static boolean first;
+    public static long OpponentTime = 0;
     private void sendInitialUDPPacket(String uuid,String code) {
         String sendingString = uuid + "&&" + code;
         byte[] sendingBytes = sendingString.getBytes();
@@ -47,8 +47,9 @@ public class Client {
         Socket tcpSocket;
         BufferedReader tcpIn;
         String uuidString;
+        isConnected = false;
         try {
-            serverIp = InetAddress.getByName("206.189.251.215");
+            serverIp = InetAddress.getByName("159.223.248.222");
             tcpSocket = new Socket(serverIp,5000);
             tcpIn = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
             uuidString = tcpIn.readLine();

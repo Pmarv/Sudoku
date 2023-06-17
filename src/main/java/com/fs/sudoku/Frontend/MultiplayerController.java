@@ -1,28 +1,24 @@
 package com.fs.sudoku.Frontend;
 
+import com.fs.sudoku.Backend.Multiplayer.Client;
+import com.fs.sudoku.Backend.Multiplayer.IncomingUdpThread;
+import com.fs.sudoku.Backend.Multiplayer.OutgoingUdpThread;
 import com.fs.sudoku.Backend.RandomPuzzleGenerator;
 import com.fs.sudoku.Backend.SudokuGrid;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.javatuples.Pair;
-import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-
-
-@Component
-public class SingleplayerController {
-
-    private ChartController chartController = new ChartController();
+public class MultiplayerController {
     private SudokuGrid sudokuGrid = new SudokuGrid();
     private RandomPuzzleGenerator randomPuzzleGenerator = new RandomPuzzleGenerator();
     private int lastNumberButton = 1;
@@ -229,20 +225,10 @@ public class SingleplayerController {
     private Scene scene;
     private String mode;
     private Scene previousScene;
-
-    public void setScene(Scene scene) {
-        this.scene = scene;
-    }
-    protected void setPreviousScene(Scene previousScene) {
-        this.previousScene = previousScene;
-    }
-    protected void setMode(String mode) {
-        this.mode = mode;
-    }
+    private Client client;
     @FXML
     public void init() {
         sudokuGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle(mode));
-
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 String buttonId = "Sudoku_Button_" + i + j;
@@ -267,17 +253,22 @@ public class SingleplayerController {
         Number_Button_8.setOnAction(this::handleNumberButtonAction8);
         Number_Button_9.setOnAction(this::handleNumberButtonAction9);
         Menu.setOnAction(this::handleMenuButton);
+        Alert alert = new Alert( Alert.AlertType.INFORMATION );
+        alert.setTitle("Please Wait...");
+        alert.setHeaderText("Waiting for other player to make a move");
+        alert.getButtonTypes().clear();
+        Thread t = new Thread( () -> {
+            while (Client.isConnected) {
+                if(!Client.lastPlayer) {
+                    Platform.runLater(alert::show);
+                } else {
+                    alert.getButtonTypes().add(ButtonType.CANCEL);
+                    alert.close();
+                    alert.getButtonTypes().clear();
+                }
+            }
+        } );
     }
-
-
-
-    private void handleMenuButton(ActionEvent actionEvent) {
-            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            stage.setScene(previousScene);
-            stage.show();
-    }
-
-
     private void handleNumberButtonAction1(ActionEvent actionEvent) {
         lastNumberButton = 1;
     }
@@ -305,35 +296,64 @@ public class SingleplayerController {
     private void handleNumberButtonAction9(ActionEvent actionEvent) {
         lastNumberButton = 9;
     }
-
-    private void handleGridButtonAction(ActionEvent event) {
-        // get the button that was clicked
-        Button clickedButton = (Button) event.getSource();
-
-        // extract the coordinates from the button id
-        String buttonId = clickedButton.getId();
-        int i = Character.getNumericValue(buttonId.charAt(14));
-        int j = Character.getNumericValue(buttonId.charAt(15));
-
-        if (!initialValues[i][j]) {
-            // update the text of the button with lastNumberButton
-            clickedButton.setText(String.valueOf(lastNumberButton));
-
-            // update the corresponding field in sudokuGrid using the setValue() method
-            sudokuGrid.setValue(new Pair<>(i, j), lastNumberButton);
-        }
-
-        // Check if the Sudoku is complete
-        if(sudokuGrid.isComplete()) {
-            // Create an alert box
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Congratulations!");
-            alert.setHeaderText(null);
-            alert.setContentText("The Sudoku is completed.");
-
-            alert.showAndWait();
-        }
-
+    private void handleMenuButton(ActionEvent actionEvent) {
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(previousScene);
+        stage.show();
     }
 
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+    public void setClient(Client client) {
+        this.client = client;
+    }
+    public void setPreviousScene(Scene scene) {
+        this.previousScene = scene;
+    }
+
+    private void handleGridButtonAction(ActionEvent actionEvent) {
+        Button button = (Button) actionEvent.getSource();
+        String buttonId = button.getId();
+        int i = Character.getNumericValue(buttonId.charAt(14));
+        int j = Character.getNumericValue(buttonId.charAt(15));
+        if (initialValues[i][j]) {
+            return;
+        }
+        if (lastNumberButton == 0) {
+            return;
+        }
+        button.setText(String.valueOf(lastNumberButton));
+        sudokuGrid.setValue(new Pair<>(i, j), lastNumberButton);
+        if (sudokuGrid.isComplete()) {
+            if(mode.equals("VS")){
+                client.stopVs();
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Sudoku");
+                if(Client.vsWinOrLose || Client.OpponentTime == 0) {
+                    alert.setHeaderText("Congratulations!");
+                    alert.setContentText("You won the game! \n Your time was: " + TimeUnit.MINUTES.convert(Client.timeTaken, TimeUnit.NANOSECONDS) + " minutes");
+                    alert.showAndWait();
+                } else {
+                    alert.setHeaderText("Sorry!");
+                    alert.setContentText("You lost the game! \n Your time was: " + TimeUnit.MINUTES.convert(Client.timeTaken, TimeUnit.NANOSECONDS) + " minutes");
+                    alert.showAndWait();
+                }
+            } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Sudoku");
+            alert.setHeaderText("Congratulations!");
+            alert.setContentText("You solved the puzzle!");
+            alert.showAndWait();
+            }
+        }
+    }
+    private void handleSudokuButton(ActionEvent event) {
+        if (mode.equals("VS")) {
+            handleGridButtonAction(event);
+        } else if (Client.first){
+            handleGridButtonAction(event);
+            client.sendSudoku();
+        }
+    }
 }
