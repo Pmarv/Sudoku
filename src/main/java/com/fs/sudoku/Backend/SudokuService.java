@@ -27,7 +27,8 @@ public class SudokuService implements CommandLineRunner {
     public void run(String... args)  {
 //        exactCoverSolver = new Exact_Cover_solver();
 //        long startTime = System.nanoTime();
-//        sudokuGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle());
+        sudokuGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Easy"));
+        System.out.println(sudokuGrid.serialize());
 //        long entTime = System.nanoTime();
 //        System.out.println((entTime-startTime));
 //        Scanner input = new Scanner(System.in);

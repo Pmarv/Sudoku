@@ -1,33 +1,40 @@
 package com.fs.sudoku.Backend.Multiplayer;
 
 
+import com.fs.sudoku.Backend.RandomPuzzleGenerator;
+import com.fs.sudoku.Backend.SudokuGrid;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.util.UUID;
+
 @Component
 @NoArgsConstructor
 public class Client {
-    private Socket tcpSocket;
     private DatagramSocket udpSocket;
-    private DatagramPacket udpPacket;
-    private BufferedReader tcpIn;
-//    private BufferedOutputStream tcpOut;
-    private String uuidString;
+
     InetAddress serverIp;
     boolean gotResponse;
     String otherClientIP;
     String otherClientPort;
+    public static boolean isConnected;
+    public static SudokuGrid multiplayerGrid = new SudokuGrid();
+    public static boolean multiplayerGridSet;
+    private final RandomPuzzleGenerator randomPuzzleGenerator = new RandomPuzzleGenerator();
+    private long startTime;
+    public static boolean vsWinOrLose;
+    protected static long timeTaken;
+    public static boolean coop;
+    public static boolean lastPlayer;
+    protected static boolean first;
 
     private void sendInitialUDPPacket(String uuid,String code) {
         String sendingString = uuid + "&&" + code;
         byte[] sendingBytes = sendingString.getBytes();
-        udpPacket = new DatagramPacket(sendingBytes,sendingBytes.length,serverIp,5001);
+        DatagramPacket udpPacket = new DatagramPacket(sendingBytes, sendingBytes.length, serverIp, 5001);
         try {
             for(int i = 0;i < 10; i++) {
             udpSocket.send(udpPacket);
@@ -37,6 +44,9 @@ public class Client {
         }
     }
     public void connectToOtherClient(String code) throws IOException {
+        Socket tcpSocket;
+        BufferedReader tcpIn;
+        String uuidString;
         try {
             serverIp = InetAddress.getByName("206.189.251.215");
             tcpSocket = new Socket(serverIp,5000);
@@ -58,9 +68,33 @@ public class Client {
             System.out.println(otherClientUUID);
             gotResponse = true;
         }
-        UdpHandlingThread u = new UdpHandlingThread(udpSocket,otherClientIP,otherClientPort);
+        IncomingUdpThread u = new IncomingUdpThread(udpSocket);
         new Thread(u).start();
+        OutgoingUdpThread ou = new OutgoingUdpThread(udpSocket,otherClientIP,otherClientPort);
+        new Thread(ou).start();
+        isConnected = true;
         tcpSocket.close();
+    }
+    public void startMultiplayer(String mode) {
+        multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Medium"));
+        OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
+        switch (mode) {
+            case "VS" -> startVS();
+            case "Co-op" -> startCoOp();
+        }
+    }
+    private void startVS() {
+         startTime = System.nanoTime();
 
+    }
+    public void stopVs() {
+        long endTime = System.nanoTime();
+         timeTaken = startTime - endTime;
+        OutgoingUdpThread.MessageQueue.add(String.valueOf(timeTaken).getBytes());
+    }
+    private void startCoOp() {
+    }
+    public void sendSudoku() {
+        OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
     }
 }

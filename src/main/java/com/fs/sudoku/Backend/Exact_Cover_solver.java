@@ -19,6 +19,7 @@ public class Exact_Cover_solver {
     private  SudokuGrid partialSolvedGrid = new SudokuGrid();
     private int[][] problem = new int[729][324];
     private int[][] problemCopy;
+    private int numberOfSquares;
 
     Root root;
 
@@ -34,42 +35,59 @@ public class Exact_Cover_solver {
     private void search(int k,boolean partial) {
         if(root.right == root) {
             if(partial){
-            partialSolvedGrid.setSudokuGrid(nodeToPartialSolution(currentSolution));
-//                System.out.println(solutions);
+            partialSolvedGrid.setSudokuGrid(nodeToPartialSolution(currentSolution,"Medium"));
             } else {
             solvedGrid.setSudokuGrid(nodeToSolution(currentSolution));
-//                System.out.println(solutions);
             }
-//            partialSolvedGrid.printGrid();
-//             solvedGrid.printGrid();
              solutions++;
         } else
             if (solutions < 2)
             {
-//            System.out.println("Search: " + k);
             Column c = root.findMinColumn();
             c.coverColumn();
-//            System.out.println("covering column: " + c.columnName);
             for(Node r = c.down; r != c; r = r.down) {
                 currentSolution.add(r);
                 for(Node j = r.right;r != j; j = j.right) {
                     j.column.coverColumn();
-//                    System.out.println("covering column: " + j.column.columnName);
                 }
                 search(k + 1,partial);
                 r = currentSolution.remove(currentSolution.size()-1);
                 c = r.column;
                 for(Node j = r.left;j != r; j = j.left) {
                     j.column.uncoverColumn();
-//                    System.out.println("uncovering column: " + j.column.columnName);
                 }
             }
             c.uncoverColumn();
-//            System.out.println("uncovering column: " + c.columnName);
         }
-
     }
-
+    private void search(int k,boolean partial,String mode) {
+        if(root.right == root) {
+            if(partial){
+                partialSolvedGrid.setSudokuGrid(nodeToPartialSolution(currentSolution,mode));
+            } else {
+                solvedGrid.setSudokuGrid(nodeToSolution(currentSolution));
+            }
+            solutions++;
+        } else
+        if (solutions < 2)
+        {
+            Column c = root.findMinColumn();
+            c.coverColumn();
+            for(Node r = c.down; r != c; r = r.down) {
+                currentSolution.add(r);
+                for(Node j = r.right;r != j; j = j.right) {
+                    j.column.coverColumn();
+                }
+                search(k + 1,partial);
+                r = currentSolution.remove(currentSolution.size()-1);
+                c = r.column;
+                for(Node j = r.left;j != r; j = j.left) {
+                    j.column.uncoverColumn();
+                }
+            }
+            c.uncoverColumn();
+        }
+    }
     /**
      * this first turns a given problem into a quad linked list and then solves it using Knuth's Algorithm X and Dancing Links
      *
@@ -81,7 +99,11 @@ public class Exact_Cover_solver {
         search(0,partial);
         root = null;
     }
-
+    public void solve(int[][] matrix,boolean partial,String mode) {
+        setUpProblem(matrix);
+        search(0,partial,mode);
+        root = null;
+    }
     private void setUpProblem(int[][] test) {
         Column lastColumn = null;
         Node lastNodeTouched;
@@ -197,11 +219,16 @@ public class Exact_Cover_solver {
         }
         return result;
     }
-    public Map<Pair<Integer,Integer>,Integer> nodeToPartialSolution(List<Node> currentSolution) {
+    public Map<Pair<Integer,Integer>,Integer> nodeToPartialSolution(List<Node> currentSolution,String mode) {
+        switch (mode) {
+            case "Easy" -> numberOfSquares = 60;
+            case "Medium" -> numberOfSquares = 40;
+            case "Hard" -> numberOfSquares = 30;
+        }
         currentSolutionCopy = new ArrayList<>(currentSolution);
         Map<Pair<Integer,Integer>,Integer> result;
         Set<Node> partialSolutionSet = new HashSet<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < numberOfSquares; i++) {
             int randomIndex = (int) (Math.random()*100);
             while ( randomIndex >= currentSolution.size() || !partialSolutionSet.add(currentSolution.get(randomIndex))) {
                 randomIndex = (int) (Math.random()*100);
