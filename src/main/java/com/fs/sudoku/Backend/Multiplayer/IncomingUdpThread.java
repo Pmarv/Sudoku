@@ -17,7 +17,7 @@ public class IncomingUdpThread implements Runnable{
         try {
             System.out.println("Entering Incoming Thread");
             while(Client.isConnected) {
-                DatagramPacket dgPacket = new DatagramPacket(new byte[1024], 1024);
+                DatagramPacket dgPacket = new DatagramPacket(new byte[4096], 4096);
 //                System.out.println("Waiting for a packet");
                 dgSocket.receive(dgPacket);
 //                System.out.println("Got a packet");
@@ -28,7 +28,7 @@ public class IncomingUdpThread implements Runnable{
                     continue;
                 }
                 if (Message.contains("val0")) {
-                    if (Client.multiplayerGrid.getSudokuGrid() == null && !Client.multiplayerGridSet) {
+                    if (!Client.multiplayerGridSet) {
                         System.out.println("Got a puzzle, am second player");
                         Client.multiplayerGrid.deserializeToSudoku(Message.trim());
                         Client.multiplayerGridSet = true;

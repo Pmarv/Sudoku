@@ -70,6 +70,7 @@ public class Client {
             gotResponse = true;
         }
         isConnected = true;
+        multiplayerGrid = new SudokuGrid();
         IncomingUdpThread u = new IncomingUdpThread(udpSocket);
         new Thread(u).start();
         OutgoingUdpThread ou = new OutgoingUdpThread(udpSocket,otherClientIP,otherClientPort);
@@ -77,11 +78,10 @@ public class Client {
         tcpSocket.close();
     }
     public void startMultiplayer(String mode) {
-        multiplayerGrid = new SudokuGrid();
         if(!Client.multiplayerGridSet) {
             multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Debugging"));
-        }
         OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
+        }
         switch (mode) {
             case "VS" -> startVS();
             case "Co-op" -> startCoOp();

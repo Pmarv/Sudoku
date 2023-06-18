@@ -51,7 +51,7 @@ public class DifficultyController {
             stage.setScene(scene);
             SingleplayerController controller = loader.getController();
             controller.setScene(scene);
-            controller.setMode("Easy");
+            controller.setMode("Debugging");
             controller.setPreviousScene(EasyButton.getScene());
             controller.init();
             stage.show();

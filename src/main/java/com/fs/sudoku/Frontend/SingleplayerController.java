@@ -332,6 +332,7 @@ public class SingleplayerController {
             alert.setContentText("The Sudoku is completed.");
 
             alert.showAndWait();
+            handleMenuButton(event);
         }
 
     }
