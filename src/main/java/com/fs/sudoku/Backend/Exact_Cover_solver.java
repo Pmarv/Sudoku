@@ -39,7 +39,7 @@ public class Exact_Cover_solver {
             } else {
             solvedGrid.setSudokuGrid(nodeToSolution(currentSolution));
             }
-             solutions++;
+            solutions++;
         } else
             if (solutions < 2)
             {
@@ -222,7 +222,7 @@ public class Exact_Cover_solver {
     public Map<Pair<Integer,Integer>,Integer> nodeToPartialSolution(List<Node> currentSolution,String mode) {
         switch (mode) {
             case "Easy" -> numberOfSquares = 60;
-            case "Medium" -> numberOfSquares = 40;
+            case "Medium" -> numberOfSquares = 45;
             case "Hard" -> numberOfSquares = 30;
         }
         currentSolutionCopy = new ArrayList<>(currentSolution);

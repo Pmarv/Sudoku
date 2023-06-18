@@ -52,6 +52,8 @@ public class MultiplayerModeController {
             controller.setClient(client);
             controller.setPreviousScene(previousScene);
             controller.setMode("VS");
+            controller.setScene(scene);
+            controller.init();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
             stage.show();
@@ -68,6 +70,8 @@ public class MultiplayerModeController {
             controller.setClient(client);
             controller.setPreviousScene(previousScene);
             controller.setMode("Co-op");
+            controller.setScene(scene);
+            controller.init();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
             stage.show();

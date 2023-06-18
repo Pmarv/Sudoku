@@ -50,9 +50,9 @@ public class MultiplayerCodeController {
         alert.getButtonTypes().remove(0);
         alert.show();
         Thread t = new Thread(() -> {
-//            try {
-//                client.connectToOtherClient(CodeField.getText());
-                System.out.println(CodeField.getText());
+            try {
+                client.connectToOtherClient(CodeField.getText());
+//                System.out.println(CodeField.getText());
             Platform.runLater(() -> {
                 alert.getButtonTypes().add(ButtonType.CANCEL);
                 alert.close();
@@ -71,14 +71,14 @@ public class MultiplayerCodeController {
                 stage.setScene(scene);
                 stage.show();
                     });
-//            } catch (IOException e) {
-//                Platform.runLater(() -> {
-//                    alert.getButtonTypes().add(ButtonType.CANCEL);
-//                    alert.close();
-//                    alert.getButtonTypes().remove(ButtonType.CANCEL);
-//                });
-//                throw new RuntimeException(e);
-//            }
+            } catch (IOException e) {
+                Platform.runLater(() -> {
+                    alert.getButtonTypes().add(ButtonType.CANCEL);
+                    alert.close();
+                    alert.getButtonTypes().remove(ButtonType.CANCEL);
+                });
+                throw new RuntimeException(e);
+            }
         });
         t.start();
 

@@ -13,12 +13,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.javatuples.Pair;
 
 import java.util.concurrent.TimeUnit;
 
 public class MultiplayerController {
+    @FXML
+    public Label modeDescriptor;
     private SudokuGrid sudokuGrid = new SudokuGrid();
     private RandomPuzzleGenerator randomPuzzleGenerator = new RandomPuzzleGenerator();
     private int lastNumberButton = 1;
@@ -238,10 +241,12 @@ public class MultiplayerController {
                     initialValues[i][j] = true;
                 }
                 button.setText(String.valueOf(value));
-                button.setOnAction(this::handleGridButtonAction);
+                button.setOnAction(this::handleSudokuButton);
             }
         }
-
+        if(mode.equals("Co-op")){
+            modeDescriptor.setText("Co-op");
+        }
 
         Number_Button_1.setOnAction(this::handleNumberButtonAction1);
         Number_Button_2.setOnAction(this::handleNumberButtonAction2);
@@ -257,17 +262,23 @@ public class MultiplayerController {
         alert.setTitle("Please Wait...");
         alert.setHeaderText("Waiting for other player to make a move");
         alert.getButtonTypes().clear();
-        Thread t = new Thread( () -> {
-            while (Client.isConnected) {
-                if(!Client.lastPlayer) {
-                    Platform.runLater(alert::show);
-                } else {
-                    alert.getButtonTypes().add(ButtonType.CANCEL);
-                    alert.close();
-                    alert.getButtonTypes().clear();
+        if(mode.equals("Co-op")) {
+            Thread t = new Thread(() -> {
+                while (Client.isConnected) {
+                    if (!Client.lastPlayer) {
+                        Platform.runLater(alert::show);
+                    } else {
+                        alert.getButtonTypes().add(ButtonType.CANCEL);
+                        alert.close();
+                        alert.getButtonTypes().clear();
+                    }
                 }
-            }
-        } );
+            });
+            t.start();
+        }
+    }
+    public void setScene(Scene scene) {
+        this.scene = scene;
     }
     private void handleNumberButtonAction1(ActionEvent actionEvent) {
         lastNumberButton = 1;
