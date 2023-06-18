@@ -17,8 +17,9 @@ public class IncomingUdpThread implements Runnable{
         try {
             System.out.println("Entering Incoming Thread");
             while(Client.isConnected) {
-                DatagramPacket dgPacket = new DatagramPacket(new byte[4096], 4096);
+                DatagramPacket dgPacket = new DatagramPacket(new byte[16384], 16384);
 //                System.out.println("Waiting for a packet");
+                dgSocket.setSoTimeout(60000);
                 dgSocket.receive(dgPacket);
 //                System.out.println("Got a packet");
                 String Message = new String(dgPacket.getData()).trim();

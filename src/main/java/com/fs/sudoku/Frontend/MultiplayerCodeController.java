@@ -47,16 +47,13 @@ public class MultiplayerCodeController {
         alert.setTitle("Please Wait");
         alert.setHeaderText(null);
         alert.setContentText("Connecting to another player. Please Standby");
-        alert.getButtonTypes().remove(0);
         alert.show();
         Thread t = new Thread(() -> {
             try {
                 client.connectToOtherClient(CodeField.getText());
 //                System.out.println(CodeField.getText());
             Platform.runLater(() -> {
-                alert.getButtonTypes().add(ButtonType.CANCEL);
                 alert.close();
-                alert.getButtonTypes().remove(ButtonType.CANCEL);
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/MultiplayerMode.fxml"));
                 Scene scene = null;
                 try {
