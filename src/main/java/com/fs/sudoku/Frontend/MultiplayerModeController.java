@@ -37,10 +37,10 @@ public class MultiplayerModeController {
 
     private void handleBackAction(ActionEvent event) {
         //go back to previous scene
+        Client.isConnected = false;
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(previousScene);
         stage.show();
-
     }
 
     private void handleVersusAction(ActionEvent event) {

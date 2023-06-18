@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class OutgoingUdpThread implements Runnable{
 
@@ -16,6 +18,7 @@ public class OutgoingUdpThread implements Runnable{
         this.dgSocket = dgSocket;
         this.otherIp = otherIp;
         this.otherPort = otherPort;
+        MessageQueue = new ConcurrentLinkedQueue<>();
     }
     @Override
     public void run() {
@@ -23,7 +26,8 @@ public class OutgoingUdpThread implements Runnable{
         MessageQueue.add(sendingBytes);
         while(Client.isConnected) {
             try {
-                DatagramPacket dgPacket = new DatagramPacket(MessageQueue.remove(), MessageQueue.remove().length, InetAddress.getByName(otherIp), Integer.parseInt(otherPort));
+                byte[] Message = MessageQueue.remove();
+                DatagramPacket dgPacket = new DatagramPacket(Message, Message.length, InetAddress.getByName(otherIp), Integer.parseInt(otherPort));
                 dgSocket.send(dgPacket);
                 Thread.sleep(1000);
                 MessageQueue.add(sendingBytes);

@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 public class MultiplayerController {
     @FXML
     public Label modeDescriptor;
-    private SudokuGrid sudokuGrid = new SudokuGrid();
     private RandomPuzzleGenerator randomPuzzleGenerator = new RandomPuzzleGenerator();
     private int lastNumberButton = 1;
     @FXML
@@ -231,12 +230,11 @@ public class MultiplayerController {
     private Client client;
     @FXML
     public void init() {
-        sudokuGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle(mode));
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 String buttonId = "Sudoku_Button_" + i + j;
                 Button button = (Button) scene.lookup("#" + buttonId);
-                int value = sudokuGrid.getValue(new Pair<>(i, j));
+                int value = Client.multiplayerGrid.getValue(new Pair<>(i, j));
                 if (value != 0) {
                     initialValues[i][j] = true;
                 }
@@ -335,8 +333,8 @@ public class MultiplayerController {
             return;
         }
         button.setText(String.valueOf(lastNumberButton));
-        sudokuGrid.setValue(new Pair<>(i, j), lastNumberButton);
-        if (sudokuGrid.isComplete()) {
+        Client.multiplayerGrid.setValue(new Pair<>(i, j), lastNumberButton);
+        if (Client.multiplayerGrid.isComplete()) {
             if(mode.equals("VS")){
                 client.stopVs();
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);

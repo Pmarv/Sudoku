@@ -65,7 +65,7 @@ public class Client {
             otherClientIP = responseParts[0];
             otherClientPort = responseParts[1];
             String otherClientUUID = responseParts[2];
-            System.out.println(otherClientIP + " "+ otherClientPort);
+            System.out.println(otherClientIP + ":" + otherClientPort);
             System.out.println(otherClientUUID);
             gotResponse = true;
         }
