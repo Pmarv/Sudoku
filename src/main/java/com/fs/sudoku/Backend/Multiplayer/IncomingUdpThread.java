@@ -23,13 +23,15 @@ public class IncomingUdpThread implements Runnable{
                 dgSocket.receive(dgPacket);
 //                System.out.println("Got a packet");
                 String Message = new String(dgPacket.getData()).trim();
-                System.out.println(Message);
+                if(!Message.equals("ping")) {
+                    System.out.println(Message);
+                }
                 if (Message.equals("Ping")) {
 //                    System.out.println("Got a ping");
                     continue;
                 }
                 if (Message.contains("val0")) {
-                    if (!Client.multiplayerGridSet) {
+                    if (!Client.multiplayerGridSet && Client.multiplayerGrid.getSudokuGrid() == null) {
                         System.out.println("Got a puzzle, am second player");
                         Client.multiplayerGrid.deserializeToSudoku(Message.trim());
                         Client.multiplayerGridSet = true;

@@ -230,6 +230,7 @@ public class MultiplayerController {
     private Client client;
     @FXML
     public void init() {
+        Client.multiplayerGrid.printGrid();
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 String buttonId = "Sudoku_Button_" + i + j;

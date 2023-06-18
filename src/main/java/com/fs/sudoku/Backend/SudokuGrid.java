@@ -170,5 +170,6 @@ public class SudokuGrid {
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
         Type sudokuMapType = new TypeToken<Map<Pair<Integer,Integer>, Integer>>() {}.getType();
         sudokuGrid = gson.fromJson(json,sudokuMapType);
+        this.setSudokuGrid(sudokuGrid);
     }
 }
