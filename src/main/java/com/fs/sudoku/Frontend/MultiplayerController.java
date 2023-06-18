@@ -283,7 +283,8 @@ public class MultiplayerController {
                                 Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
                                 alert1.setTitle("Congratulations!");
                                 alert1.setHeaderText("You guys have completed the puzzle!");
-                                alert1.show();
+                                alert1.showAndWait();
+                                handleMenuButton(new ActionEvent());
                             });
                         }
                         }
@@ -379,7 +380,8 @@ public class MultiplayerController {
             alert.setTitle("Sudoku");
             alert.setHeaderText("Congratulations!");
             alert.setContentText("You guys solved the puzzle!");
-            alert.showAndWait();
+            alert.show();
+            handleMenuButton(actionEvent);
             }
         }
     }

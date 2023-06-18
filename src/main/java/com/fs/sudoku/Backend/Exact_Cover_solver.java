@@ -246,6 +246,7 @@ public class Exact_Cover_solver {
             case "Easy" -> numberOfSquares = 60;
             case "Medium" -> numberOfSquares = 45;
             case "Hard" -> numberOfSquares = 30;
+            default -> numberOfSquares = 78;
         }
         currentSolutionCopy = new ArrayList<>(currentSolution);
         Map<Pair<Integer,Integer>,Integer> result;

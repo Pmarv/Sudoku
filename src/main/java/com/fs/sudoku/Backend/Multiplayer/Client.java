@@ -91,7 +91,7 @@ public class Client {
      */
     public void startMultiplayer(String mode) {
         if(!Client.multiplayerGridSet) {
-            multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Debugging"));
+            multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Medium"));
             Client.hasGeneratedPuzzle = true;
         }
         OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
