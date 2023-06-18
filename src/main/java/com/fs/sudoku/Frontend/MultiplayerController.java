@@ -229,6 +229,7 @@ public class MultiplayerController {
     private Scene previousScene;
     private Client client;
     private int value;
+    public static boolean isUptoDate = false;
     @FXML
     public void init() {
         Client.multiplayerGrid.printGrid();
@@ -277,7 +278,10 @@ public class MultiplayerController {
                             alert.hide();
                             alert.getButtonTypes().clear();
                         }  );
-                        updateGrid();
+                        if (!isUptoDate) {
+                            updateGrid();
+                        isUptoDate = true;
+                        }
                     }
                     try {
                         Thread.sleep(100);
@@ -381,6 +385,7 @@ public class MultiplayerController {
             client.sendSudoku();
             handleGridButtonAction(event);
             Client.lastPlayer = true;
+            isUptoDate = true;
         }
     }
     private void updateGrid() {

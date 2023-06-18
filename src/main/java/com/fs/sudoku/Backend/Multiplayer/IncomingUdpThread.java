@@ -43,6 +43,7 @@ public class IncomingUdpThread implements Runnable{
                         System.out.println("Got a puzzle, can play now");
                         Client.multiplayerGrid.deserializeToSudoku(Message.trim());
                         Client.lastPlayer = false;
+                        MultiplayerController.isUptoDate = false;
                     }
                     else {
                         System.out.println("Got a puzzle, am first player");
