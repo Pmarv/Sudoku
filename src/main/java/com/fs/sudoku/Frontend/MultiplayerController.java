@@ -228,16 +228,21 @@ public class MultiplayerController {
     private String mode;
     private Scene previousScene;
     private Client client;
+    private int value;
     @FXML
     public void init() {
         Client.multiplayerGrid.printGrid();
-        for (long i = 0L; i < 9L; i++) {
-            for (long j = 0L; j < 9L; j++) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
                 String buttonId = "Sudoku_Button_" +(int) i + (int)j;
                 Button button = (Button) scene.lookup("#" + buttonId);
-                long value = Client.multiplayerGrid.getValueLong(new Pair<>(i, j));
+                if(Client.first) {
+                     value = Client.multiplayerGrid.getValue(new Pair<>(i, j));
+                } else {
+                 value = Client.multiplayerGrid.getValueLong(new Pair<>((long)i,(long) j));
+                }
                 if (value != 0) {
-                    initialValues[(int)i][(int)j] = true;
+                    initialValues[i][j] = true;
                 }
                 button.setText(String.valueOf(value));
                 button.setOnAction(this::handleSudokuButton);
