@@ -95,7 +95,7 @@ public class Client {
     }
     public void stopVs() {
         long endTime = System.nanoTime();
-         timeTaken = startTime - endTime;
+         timeTaken = endTime - startTime;
         OutgoingUdpThread.MessageQueue.add(String.valueOf(timeTaken).getBytes());
     }
     private void startCoOp() {

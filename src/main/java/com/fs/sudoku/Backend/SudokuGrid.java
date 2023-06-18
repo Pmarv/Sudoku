@@ -3,6 +3,7 @@ package com.fs.sudoku.Backend;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.ToNumberPolicy;
 import lombok.Getter;
 import lombok.Setter;
 import org.javatuples.Pair;
@@ -53,6 +54,14 @@ public class SudokuGrid {
     public int getValue(Pair<Integer,Integer> key) {
         if(key.getValue1() < 9  && key.getValue0() < 9) {
         return sudokuGrid.get(key);
+        }
+        else {
+            return 0;
+        }
+    }
+    public int getValueLong(Pair<Long,Long> key) {
+        if(key.getValue1() < 9  && key.getValue0() < 9) {
+            return sudokuGrid.get(key);
         }
         else {
             return 0;
@@ -167,9 +176,9 @@ public class SudokuGrid {
         return gson.toJson(sudokuGrid);
     }
     public void deserializeToSudoku(String json) {
-        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create();
         Type sudokuMapType = new TypeToken<Map<Pair<Integer,Integer>, Integer>>() {}.getType();
-        sudokuGrid = gson.fromJson(json,sudokuMapType);
-        this.setSudokuGrid(sudokuGrid);
+        this.sudokuGrid = gson.fromJson(json,sudokuMapType);
+        this.printGrid();
     }
 }
