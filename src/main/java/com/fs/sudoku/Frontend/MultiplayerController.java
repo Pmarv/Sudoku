@@ -365,4 +365,5 @@ public class MultiplayerController {
             client.sendSudoku();
         }
     }
+
 }

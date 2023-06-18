@@ -15,20 +15,26 @@ public class IncomingUdpThread implements Runnable{
     @Override
     public void run() {
         try {
+            System.out.println("Entering Incoming Thread");
             while(Client.isConnected) {
                 DatagramPacket dgPacket = new DatagramPacket(new byte[1024], 1024);
+                System.out.println("Waiting for a packet");
                 dgSocket.receive(dgPacket);
+                System.out.println("Got a packet");
                 String Message = dgPacket.getData().toString().trim();
                 if (Message.equals("Ping")) {
+                    System.out.println("Got a ping");
                     continue;
                 }
                 if (Message.contains("\"val0\":")) {
-                    if (Client.multiplayerGrid.getSudokuGrid() == null) {
+                    if (Client.multiplayerGrid.getSudokuGrid() == null && !Client.multiplayerGridSet) {
+                        System.out.println("Got a puzzle, am second player");
                         Client.multiplayerGrid.deserializeToSudoku(Message.trim());
                         Client.multiplayerGridSet = true;
                         Client.first = false;
                     }
                     else {
+                        System.out.println("Got a puzzle, am first player");
                         Client.first = true;
                         Client.multiplayerGridSet = true;
                     }

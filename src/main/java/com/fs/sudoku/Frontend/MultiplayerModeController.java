@@ -65,6 +65,7 @@ public class MultiplayerModeController {
         client.startMultiplayer("Co-op");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Multiplayer.fxml"));
         try {
+            Client.coop = true;
             Scene scene = new Scene(loader.load());
             MultiplayerController controller = loader.getController();
             controller.setClient(client);

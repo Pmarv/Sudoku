@@ -29,7 +29,7 @@ public class OutgoingUdpThread implements Runnable{
                 byte[] Message = MessageQueue.remove();
                 DatagramPacket dgPacket = new DatagramPacket(Message, Message.length, InetAddress.getByName(otherIp), Integer.parseInt(otherPort));
                 dgSocket.send(dgPacket);
-                Thread.sleep(1000);
+                Thread.sleep(100);
                 MessageQueue.add(sendingBytes);
             } catch (IOException | InterruptedException e) {
                 Client.isConnected = false;

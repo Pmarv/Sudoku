@@ -221,6 +221,7 @@ public class Exact_Cover_solver {
     }
     public Map<Pair<Integer,Integer>,Integer> nodeToPartialSolution(List<Node> currentSolution,String mode) {
         switch (mode) {
+            case "Debugging" -> numberOfSquares = 79;
             case "Easy" -> numberOfSquares = 60;
             case "Medium" -> numberOfSquares = 45;
             case "Hard" -> numberOfSquares = 30;

@@ -1,5 +1,6 @@
 package com.fs.sudoku.Frontend;
 
+import com.fs.sudoku.Backend.Multiplayer.Client;
 import com.fs.sudoku.SudokuApplication;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -20,6 +21,7 @@ public class UIApplication extends javafx.application.Application {
 
     @Override
     public void stop() {
+        Client.isConnected  = false;
         applicationContext.close();
         Platform.exit();
     }

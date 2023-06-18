@@ -69,15 +69,15 @@ public class Client {
             System.out.println(otherClientUUID);
             gotResponse = true;
         }
+        isConnected = true;
         IncomingUdpThread u = new IncomingUdpThread(udpSocket);
         new Thread(u).start();
         OutgoingUdpThread ou = new OutgoingUdpThread(udpSocket,otherClientIP,otherClientPort);
         new Thread(ou).start();
-        isConnected = true;
         tcpSocket.close();
     }
     public void startMultiplayer(String mode) {
-        multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Medium"));
+        multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Debugging"));
         OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
         switch (mode) {
             case "VS" -> startVS();
