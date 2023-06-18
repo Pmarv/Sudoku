@@ -236,7 +236,7 @@ public class MultiplayerController {
             for (int j = 0; j < 9; j++) {
                 String buttonId = "Sudoku_Button_" +(int) i + (int)j;
                 Button button = (Button) scene.lookup("#" + buttonId);
-                if(Client.first) {
+                if(Client.hasGeneratedPuzzle) {
                      value = Client.multiplayerGrid.getValue(new Pair<>(i, j));
                 } else {
                  value = Client.multiplayerGrid.getValueLong(new Pair<>((long)i,(long) j));
@@ -312,6 +312,9 @@ public class MultiplayerController {
         lastNumberButton = 9;
     }
     private void handleMenuButton(ActionEvent actionEvent) {
+        Client.multiplayerGridSet = false;
+        Client.hasGeneratedPuzzle = false;
+        Client.isConnected = false;
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(previousScene);
         stage.show();

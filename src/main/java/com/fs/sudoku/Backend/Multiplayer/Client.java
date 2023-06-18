@@ -30,7 +30,7 @@ public class Client {
     public static boolean coop;
     public static boolean lastPlayer;
     public static boolean first;
-    protected static boolean hasGeneratedPuzzle;
+    public static boolean hasGeneratedPuzzle;
     public static long OpponentTime = 0;
     private void sendInitialUDPPacket(String uuid,String code) {
         String sendingString = uuid + "&&" + code;
