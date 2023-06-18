@@ -4,13 +4,13 @@ import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
 import org.javatuples.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.*;
 
 @Getter @Setter
-@Component
 public class Exact_Cover_solver {
 
     List<Node> currentSolution = new ArrayList<>();
@@ -20,6 +20,7 @@ public class Exact_Cover_solver {
     private int[][] problem = new int[729][324];
     private int[][] problemCopy;
     private int numberOfSquares;
+
 
     Root root;
 
@@ -266,10 +267,10 @@ public class Exact_Cover_solver {
         String line;
         int count = 0;
         int count2 = 0;
-        File matrix = new File("9x9 cover matrix.txt");
+//        File matrix = new File("src/main/resources/9x9covermatrix.txt");
         BufferedReader r;
         try {
-            r = new BufferedReader(new InputStreamReader(new FileInputStream(matrix)));
+            r = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/9x9covermatrix.txt")));
             while(count < 729) {
                 line = r.readLine();
                 String[] test2 = line.split(" ");

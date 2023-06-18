@@ -53,7 +53,7 @@ public class MultiplayerCodeController {
         Thread t = new Thread(() -> {
             try {
                 client.connectToOtherClient(CodeField.getText());
-//                System.out.println(CodeField.getText());
+
             Platform.runLater(() -> {
                 alert.close();
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/MultiplayerMode.fxml"));
