@@ -77,7 +77,10 @@ public class Client {
         tcpSocket.close();
     }
     public void startMultiplayer(String mode) {
-        multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Debugging"));
+        multiplayerGrid = new SudokuGrid();
+        if(!Client.multiplayerGridSet) {
+            multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Debugging"));
+        }
         OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
         switch (mode) {
             case "VS" -> startVS();

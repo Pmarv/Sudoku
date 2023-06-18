@@ -18,15 +18,16 @@ public class IncomingUdpThread implements Runnable{
             System.out.println("Entering Incoming Thread");
             while(Client.isConnected) {
                 DatagramPacket dgPacket = new DatagramPacket(new byte[1024], 1024);
-                System.out.println("Waiting for a packet");
+//                System.out.println("Waiting for a packet");
                 dgSocket.receive(dgPacket);
-                System.out.println("Got a packet");
-                String Message = dgPacket.getData().toString().trim();
+//                System.out.println("Got a packet");
+                String Message = new String(dgPacket.getData()).trim();
+                System.out.println(Message);
                 if (Message.equals("Ping")) {
-                    System.out.println("Got a ping");
+//                    System.out.println("Got a ping");
                     continue;
                 }
-                if (Message.contains("\"val0\":")) {
+                if (Message.contains("val0")) {
                     if (Client.multiplayerGrid.getSudokuGrid() == null && !Client.multiplayerGridSet) {
                         System.out.println("Got a puzzle, am second player");
                         Client.multiplayerGrid.deserializeToSudoku(Message.trim());
@@ -43,7 +44,7 @@ public class IncomingUdpThread implements Runnable{
                         Client.lastPlayer = false;
                     }
                 }
-                if(!Pattern.matches("[a-zA-Z]+", Message)) {
+                else if(!Pattern.matches("[a-zA-Z]+", Message)) {
                     Client.OpponentTime = Long.parseLong(Message.trim());
                     Client.vsWinOrLose = Client.OpponentTime <= Client.timeTaken;
                 }
