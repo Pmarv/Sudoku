@@ -230,7 +230,7 @@ public class SingleplayerController {
     private String mode;
     private Scene previousScene;
 
-    public void setScene(Scene scene) {
+    protected void setScene(Scene scene) {
         this.scene = scene;
     }
     protected void setPreviousScene(Scene previousScene) {
@@ -240,7 +240,7 @@ public class SingleplayerController {
         this.mode = mode;
     }
     @FXML
-    public void init() {
+    protected void init() {
         sudokuGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle(mode));
 
         for (int i = 0; i < 9; i++) {

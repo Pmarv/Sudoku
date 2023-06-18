@@ -18,6 +18,10 @@ public class SudokuGrid {
     private Map<Pair<Integer,Integer>, Integer> sudokuGrid = new TreeMap<>();
     private Pair<Integer,Integer> key;
     private SudokuValidator sudokuValidator;
+
+    /**
+     * Sets the grid to an empty grid filled with 0s
+     */
     public void generateEmptyGrid() {
         for(int i = 0; i < 9; i++) {
             for(int j = 0; j < 9; j++) {
@@ -26,6 +30,10 @@ public class SudokuGrid {
             }
         }
     }
+
+    /**
+     * @param grid takes a map of coordinates and their corresponding values and sets the grid to the given values
+     */
     public void setSudokuGrid(Map<Pair<Integer,Integer>,Integer> grid) {
         this.generateEmptyGrid();
         for(Pair<Integer,Integer> key : grid.keySet()) {
@@ -33,16 +41,13 @@ public class SudokuGrid {
         }
     }
 
-    /**
-     * populates the subGridCoordinates map with the coordinates of the subgrid
-     */
+
 
 
     /**
-     * constructor for the grid which also calls populateSubGridCoordinates
+     * constructor for the grid
      */
     public SudokuGrid(){
-//      generateEmptyGrid();
     }
 
 
@@ -59,6 +64,12 @@ public class SudokuGrid {
             return 0;
         }
     }
+
+    /**
+     * Only used in conjunction with a deserialized grid
+     * @param key Pair of Longs(x,y) are given that correspond to coordinates in the grid
+     * @return returns the value at the given coordinates
+     */
     public int getValueLong(Pair<Long,Long> key) {
         if(key.getValue1() < 9  && key.getValue0() < 9) {
             return sudokuGrid.get(key);
@@ -79,6 +90,7 @@ public class SudokuGrid {
         }
 
     }
+
 
     /**
      * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
@@ -117,6 +129,9 @@ public class SudokuGrid {
     }
 
 
+    /**
+     * @param array takes a 2d array of integers and sets the grid to the given values
+     */
     public void intArrayToSudoku(int[][] array) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -127,8 +142,9 @@ public class SudokuGrid {
     }
 
 
-
-
+    /**
+     * Prints the grid in a readable format to console
+     */
     public void printGrid() {
         Collection<Integer> gridValues = sudokuGrid.values();
         Object[] array = gridValues.toArray();
@@ -162,6 +178,10 @@ public class SudokuGrid {
         }
         System.out.println(str);
     }
+
+    /**
+     * @return returns true if the grid is complete and valid
+     */
     public boolean isComplete() {
         sudokuValidator = new SudokuValidator();
         for (Integer value:sudokuGrid.values()) {
@@ -171,14 +191,21 @@ public class SudokuGrid {
         }
         return sudokuValidator.validate(this);
     }
+
+    /**
+     * @return returns the grid as a json string
+     */
     public String serialize() {
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
         return gson.toJson(sudokuGrid);
     }
+
+    /**
+     * @param json takes a json string and deserializes it to a sudoku grid
+     */
     public void deserializeToSudoku(String json) {
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create();
-        Type sudokuMapType = new TypeToken<Map<Pair<Integer,Integer>, Integer>>() {}.getType();
+        Type sudokuMapType = new TypeToken<TreeMap<Pair<Integer,Integer>, Integer>>() {}.getType();
         this.sudokuGrid = gson.fromJson(json,sudokuMapType);
-        this.printGrid();
     }
 }

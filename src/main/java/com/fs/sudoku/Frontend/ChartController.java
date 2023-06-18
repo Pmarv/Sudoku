@@ -35,9 +35,7 @@ public class ChartController {
         MultiplayerButton.setOnAction(this::handleMultiplayerAction);
     }
 
-    public Resource getDifficultyStage() {
-        return this.DifficultyStage;
-    }
+
     private void handleButtonAction(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(DifficultyStage.getURL());

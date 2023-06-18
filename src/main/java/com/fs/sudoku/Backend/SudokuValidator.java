@@ -42,6 +42,14 @@ public class SudokuValidator {
         }
         return true;
     }
+
+    /**
+     * Simulates entering a key and number and determines if the grid is valid
+     * @param grid SudokuGrid to validate
+     * @param key Key to validate
+     * @param num Number to validate
+     * @return True if the grid is valid, false otherwise
+     */
     public boolean validateGrid(Map<Pair<Integer,Integer>,Integer> grid,Pair<Integer,Integer> key,Integer num) {
         if (!key.contains(0)) {
             sudokuGrid.setSudokuGrid(grid);
@@ -53,6 +61,10 @@ public class SudokuValidator {
         }
     }
 
+    /**
+     * @param grid SudokuGrid to validate
+     * @return True if the grid is valid, false otherwise
+     */
     public boolean validate(SudokuGrid grid) {
         sudokuGrid = grid;
         for (int i = 0; i < 9; i++) {

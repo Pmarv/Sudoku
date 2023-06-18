@@ -230,8 +230,9 @@ public class MultiplayerController {
     private Client client;
     private int value;
     public static boolean isUptoDate = true;
+    public static boolean probablyComplete = false;
     @FXML
-    public void init() {
+    protected void init() {
         Client.multiplayerGrid.printGrid();
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -270,7 +271,7 @@ public class MultiplayerController {
         if(mode.equals("Co-op")) {
             Thread t = new Thread(() -> {
                 while (Client.isConnected) {
-                    if (Client.lastPlayer && !Client.multiplayerGrid.isComplete()) {
+                    if (Client.lastPlayer && !Client.multiplayerGrid.isComplete() && !probablyComplete) {
                         Platform.runLater(alert::show);
                     } else {
                         Platform.runLater(()-> {
@@ -281,7 +282,7 @@ public class MultiplayerController {
                         if (!isUptoDate) {
                             updateGrid();
                         isUptoDate = true;
-                        if (Client.multiplayerGrid.isComplete()) {
+                        if (Client.multiplayerGrid.isComplete() || probablyComplete) {
                             Platform.runLater(() -> {
                                 Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
                                 alert1.setTitle("Congratulations!");
@@ -301,7 +302,7 @@ public class MultiplayerController {
             t.start();
         }
     }
-    public void setScene(Scene scene) {
+    protected void setScene(Scene scene) {
         this.scene = scene;
     }
     private void handleNumberButtonAction1(ActionEvent actionEvent) {
@@ -340,13 +341,13 @@ public class MultiplayerController {
         stage.show();
     }
 
-    public void setMode(String mode) {
+    protected void setMode(String mode) {
         this.mode = mode;
     }
-    public void setClient(Client client) {
+    protected void setClient(Client client) {
         this.client = client;
     }
-    public void setPreviousScene(Scene scene) {
+    protected void setPreviousScene(Scene scene) {
         this.previousScene = scene;
     }
 

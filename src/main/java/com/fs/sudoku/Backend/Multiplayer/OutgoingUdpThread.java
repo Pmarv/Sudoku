@@ -20,6 +20,10 @@ public class OutgoingUdpThread implements Runnable{
         this.otherPort = otherPort;
         MessageQueue = new ConcurrentLinkedQueue<>();
     }
+
+    /**
+     * Sends a Message to the other player every 100 milliseconds in a thread
+     */
     @Override
     public void run() {
         byte[] sendingBytes = "ping".getBytes();

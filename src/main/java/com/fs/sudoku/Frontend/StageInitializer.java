@@ -21,10 +21,15 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
     private String applicationTitle;
     private ApplicationContext applicationContext;
 
-    public StageInitializer(@Value("${spring.application.ui.title}") String applicationTitle, ApplicationContext applicationContext) {
+    protected StageInitializer(@Value("${spring.application.ui.title}") String applicationTitle, ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         this.applicationTitle = applicationTitle;
     }
+
+    /**
+     * This method is called when the application is ready to start and opens the first screen
+     * @param event StageReadyEvent
+     */
     @Override
     public void onApplicationEvent(StageReadyEvent event) {
         try {

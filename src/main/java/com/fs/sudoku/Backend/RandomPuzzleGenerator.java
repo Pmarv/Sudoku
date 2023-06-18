@@ -16,6 +16,11 @@ public class RandomPuzzleGenerator {
     SudokuGrid sudokuGrid = new SudokuGrid();
     Exact_Cover_solver exactCoverSolver;
     SudokuValidator sudokuValidator = new SudokuValidator();
+
+    /**
+     * @param mode Mode of the game
+     * @return Map of the generated puzzle
+     */
     public Map<Pair<Integer,Integer>,Integer> generateRandomPuzzle(String mode) {
         int attempts = 0;
         exactCoverSolver = new Exact_Cover_solver();

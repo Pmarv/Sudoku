@@ -25,6 +25,9 @@ public class Exact_Cover_solver {
 
     int solutions = 0;
 
+    /**
+     * Parses the matrix file and creates the matrix while instantiating the object
+     */
     public Exact_Cover_solver() {
         parseMatrixFile();
     }
@@ -92,13 +95,19 @@ public class Exact_Cover_solver {
      * this first turns a given problem into a quad linked list and then solves it using Knuth's Algorithm X and Dancing Links
      *
      * @param matrix an exact cover problem in form of a double int array filled with 1s and 0s
-     *
+     * @param partial boolean to determine if the solution should be a partial solution or a full solution
      */
     public void solve(int[][] matrix,boolean partial) {
         setUpProblem(matrix);
         search(0,partial);
         root = null;
     }
+
+    /**
+     * @param matrix an exact cover problem in form of a double int array filled with 1s and 0s
+     * @param partial boolean to determine if the solution should be a partial solution or a full solution
+     * @param mode String to determine the difficulty of the partial solution
+     */
     public void solve(int[][] matrix,boolean partial,String mode) {
         setUpProblem(matrix);
         search(0,partial,mode);
@@ -177,6 +186,11 @@ public class Exact_Cover_solver {
 //        System.out.println();
     }
 
+    /**
+     * converts a given sudoku grid into a exact cover problem
+     * @param grid a sudoku Grid
+     * @return a sudoku grid in form of a double int array
+     */
     public int[][] sudokuToCover(Map<Pair<Integer,Integer>,Integer> grid){
         problemCopy = Arrays.stream(problem).map(int[]::clone).toArray(int[][]::new);
         for (int row = 1; row <= 9; row++) {
@@ -219,6 +233,13 @@ public class Exact_Cover_solver {
         }
         return result;
     }
+
+    /**
+     * generates a partial solution based on the mode of the game
+     * @param currentSolution the current solution
+     * @param mode the mode of the game
+     * @return a map of the partial solution
+     */
     public Map<Pair<Integer,Integer>,Integer> nodeToPartialSolution(List<Node> currentSolution,String mode) {
         switch (mode) {
             case "Debugging" -> numberOfSquares = 79;

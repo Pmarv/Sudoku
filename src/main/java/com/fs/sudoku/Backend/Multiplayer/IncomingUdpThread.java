@@ -14,6 +14,10 @@ public class IncomingUdpThread implements Runnable{
     public IncomingUdpThread(DatagramSocket dgSocket) {
         this.dgSocket = dgSocket;
     }
+
+    /**
+     * Receives a Message from the other player every 60 seconds in a thread
+     */
     @Override
     public void run() {
         try {
@@ -41,7 +45,11 @@ public class IncomingUdpThread implements Runnable{
                         Client.lastPlayer = true;
                     } else if(Client.coop && Client.lastPlayer) {
                         System.out.println("Got a puzzle, can play now");
-                        Client.multiplayerGrid.deserializeToSudoku(Message.trim());
+                        try {
+                            Client.multiplayerGrid.deserializeToSudoku(Message.trim());
+                        } catch (Exception e) {
+                            MultiplayerController.probablyComplete = true;
+                        }
                         Client.lastPlayer = false;
                         MultiplayerController.isUptoDate = false;
                     }

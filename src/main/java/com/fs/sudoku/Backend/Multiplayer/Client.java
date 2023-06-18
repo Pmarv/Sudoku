@@ -44,6 +44,12 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Connects to another client
+     * @param code The code entered by the user to connect to another
+     * @throws IOException
+     */
     public void connectToOtherClient(String code) throws IOException {
         Socket tcpSocket;
         BufferedReader tcpIn;
@@ -78,6 +84,11 @@ public class Client {
         new Thread(ou).start();
         tcpSocket.close();
     }
+
+    /**
+     * Starts the multiplayer game
+     * @param mode VS or Co-op
+     */
     public void startMultiplayer(String mode) {
         if(!Client.multiplayerGridSet) {
             multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Debugging"));
@@ -93,6 +104,10 @@ public class Client {
          startTime = System.nanoTime();
 
     }
+
+    /**
+     * Sends the time taken to complete the puzzle to the other player
+     */
     public void stopVs() {
         long endTime = System.nanoTime();
          timeTaken = endTime - startTime;
@@ -100,6 +115,10 @@ public class Client {
     }
     private void startCoOp() {
     }
+
+    /**
+     * Sends the current state of the grid to the other player
+     */
     public void sendSudoku() {
         OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
     }
