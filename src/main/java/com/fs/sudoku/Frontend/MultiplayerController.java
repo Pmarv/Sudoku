@@ -269,9 +269,10 @@ public class MultiplayerController {
         if(mode.equals("Co-op")) {
             Thread t = new Thread(() -> {
                 while (Client.isConnected) {
-                    if (!Client.lastPlayer) {
+                    if (Client.lastPlayer) {
                         Platform.runLater(alert::show);
                     } else {
+                        updateGrid();
                         alert.getButtonTypes().add(ButtonType.CANCEL);
                         alert.close();
                         alert.getButtonTypes().clear();
@@ -369,10 +370,27 @@ public class MultiplayerController {
     private void handleSudokuButton(ActionEvent event) {
         if (mode.equals("VS")) {
             handleGridButtonAction(event);
-        } else if (Client.first){
+        } else if (mode.equals("Co-op")){
             handleGridButtonAction(event);
             client.sendSudoku();
+            Client.lastPlayer = true;
         }
+    }
+    private void updateGrid() {
+        Platform.runLater(() -> {
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    String buttonId = "Sudoku_Button_" + (int) i + (int) j;
+                    Button button = (Button) scene.lookup("#" + buttonId);
+                    if(Client.hasGeneratedPuzzle) {
+                        value = Client.multiplayerGrid.getValue(new Pair<>(i, j));
+                    } else {
+                        value = Client.multiplayerGrid.getValueLong(new Pair<>((long)i,(long) j));
+                    }
+                    button.setText(String.valueOf(value));
+                }
+            }
+        });
     }
 
 }

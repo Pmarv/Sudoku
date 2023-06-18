@@ -1,5 +1,7 @@
 package com.fs.sudoku.Backend.Multiplayer;
 
+import com.fs.sudoku.Frontend.MultiplayerController;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -36,15 +38,15 @@ public class IncomingUdpThread implements Runnable{
                         Client.multiplayerGrid.deserializeToSudoku(Message.trim());
                         Client.multiplayerGridSet = true;
                         Client.first = false;
+                        Client.lastPlayer = true;
+                    } else if(Client.coop && Client.lastPlayer) {
+                        Client.multiplayerGrid.deserializeToSudoku(Message.trim());
+                        Client.lastPlayer = false;
                     }
                     else {
                         System.out.println("Got a puzzle, am first player");
                         Client.first = true;
                         Client.multiplayerGridSet = true;
-                    }
-                    if(Client.coop && Client.lastPlayer) {
-                        Client.multiplayerGrid.deserializeToSudoku(Message.trim());
-                        Client.lastPlayer = false;
                     }
                 }
                 else if(!Pattern.matches("[a-zA-Z]+", Message)) {
