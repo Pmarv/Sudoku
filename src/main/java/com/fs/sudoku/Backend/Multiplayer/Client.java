@@ -30,6 +30,7 @@ public class Client {
     public static boolean coop;
     public static boolean lastPlayer;
     public static boolean first;
+    protected static boolean hasGeneratedPuzzle;
     public static long OpponentTime = 0;
     private void sendInitialUDPPacket(String uuid,String code) {
         String sendingString = uuid + "&&" + code;
@@ -80,6 +81,7 @@ public class Client {
     public void startMultiplayer(String mode) {
         if(!Client.multiplayerGridSet) {
             multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Debugging"));
+            Client.hasGeneratedPuzzle = true;
         }
         OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
         switch (mode) {

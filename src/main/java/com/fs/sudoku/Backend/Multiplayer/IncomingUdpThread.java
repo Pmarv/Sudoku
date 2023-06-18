@@ -31,7 +31,7 @@ public class IncomingUdpThread implements Runnable{
                     continue;
                 }
                 if (Message.contains("val0")) {
-                    if (!Client.multiplayerGridSet && Client.multiplayerGrid.getSudokuGrid() == null) {
+                    if (!Client.multiplayerGridSet && !Client.hasGeneratedPuzzle) {
                         System.out.println("Got a puzzle, am second player");
                         Client.multiplayerGrid.deserializeToSudoku(Message.trim());
                         Client.multiplayerGridSet = true;
