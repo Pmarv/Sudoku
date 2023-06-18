@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class OutgoingUdpThread implements Runnable{
 
@@ -16,16 +18,22 @@ public class OutgoingUdpThread implements Runnable{
         this.dgSocket = dgSocket;
         this.otherIp = otherIp;
         this.otherPort = otherPort;
+        MessageQueue = new ConcurrentLinkedQueue<>();
     }
+
+    /**
+     * Sends a Message to the other player every 100 milliseconds in a thread
+     */
     @Override
     public void run() {
         byte[] sendingBytes = "ping".getBytes();
         MessageQueue.add(sendingBytes);
         while(Client.isConnected) {
             try {
-                DatagramPacket dgPacket = new DatagramPacket(MessageQueue.remove(), MessageQueue.remove().length, InetAddress.getByName(otherIp), Integer.parseInt(otherPort));
+                byte[] Message = MessageQueue.remove();
+                DatagramPacket dgPacket = new DatagramPacket(Message, Message.length, InetAddress.getByName(otherIp), Integer.parseInt(otherPort));
                 dgSocket.send(dgPacket);
-                Thread.sleep(1000);
+                Thread.sleep(100);
                 MessageQueue.add(sendingBytes);
             } catch (IOException | InterruptedException e) {
                 Client.isConnected = false;

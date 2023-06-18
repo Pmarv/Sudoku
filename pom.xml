@@ -8,9 +8,10 @@
         <version>3.0.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    <packaging>jar</packaging>
     <groupId>com.FS</groupId>
     <artifactId>Sudoku</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>Sudoku</name>
     <description>Sudoku</description>
     <properties>
@@ -75,30 +76,12 @@
             <version>2.10.1</version>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <configuration>
-                    <mainClass>com.fs.sudoku.SudokuApplication</mainClass>
-                </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

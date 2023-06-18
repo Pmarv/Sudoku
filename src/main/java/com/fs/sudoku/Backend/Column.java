@@ -9,6 +9,11 @@ public class Column extends Node {
     String columnName;
     Column right;
     Column left;
+
+    /**
+     * Constructor for the column
+     * @param columnName Name of the column
+     */
     public Column(String columnName) {
         super();
         nodeCount = 0;
@@ -16,6 +21,9 @@ public class Column extends Node {
         column = this;
     }
 
+    /**
+     * Covers the column
+     */
     public void coverColumn() {
         column.right.left = column.left;
         column.left.right = column.right;
@@ -27,6 +35,10 @@ public class Column extends Node {
             }
         }
     }
+
+    /**
+     * Uncovers the column
+     */
     public void uncoverColumn() {
         for(Node i = column.up;i != column;i=i.up) {
             for(Node j = i.left;j != i; j = j.left) {

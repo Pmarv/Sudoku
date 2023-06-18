@@ -3,9 +3,11 @@ package com.fs.sudoku.Backend;
 import com.fs.sudoku.Backend.Multiplayer.Client;
 import lombok.NoArgsConstructor;
 import org.javatuples.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+
 
 @Component
 @NoArgsConstructor
@@ -14,6 +16,11 @@ public class RandomPuzzleGenerator {
     SudokuGrid sudokuGrid = new SudokuGrid();
     Exact_Cover_solver exactCoverSolver;
     SudokuValidator sudokuValidator = new SudokuValidator();
+
+    /**
+     * @param mode Mode of the game
+     * @return Map of the generated puzzle
+     */
     public Map<Pair<Integer,Integer>,Integer> generateRandomPuzzle(String mode) {
         int attempts = 0;
         exactCoverSolver = new Exact_Cover_solver();

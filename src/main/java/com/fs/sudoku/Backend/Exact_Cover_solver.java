@@ -4,13 +4,13 @@ import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
 import org.javatuples.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.*;
 
 @Getter @Setter
-@Component
 public class Exact_Cover_solver {
 
     List<Node> currentSolution = new ArrayList<>();
@@ -21,10 +21,14 @@ public class Exact_Cover_solver {
     private int[][] problemCopy;
     private int numberOfSquares;
 
+
     Root root;
 
     int solutions = 0;
 
+    /**
+     * Parses the matrix file and creates the matrix while instantiating the object
+     */
     public Exact_Cover_solver() {
         parseMatrixFile();
     }
@@ -39,7 +43,7 @@ public class Exact_Cover_solver {
             } else {
             solvedGrid.setSudokuGrid(nodeToSolution(currentSolution));
             }
-             solutions++;
+            solutions++;
         } else
             if (solutions < 2)
             {
@@ -92,13 +96,19 @@ public class Exact_Cover_solver {
      * this first turns a given problem into a quad linked list and then solves it using Knuth's Algorithm X and Dancing Links
      *
      * @param matrix an exact cover problem in form of a double int array filled with 1s and 0s
-     *
+     * @param partial boolean to determine if the solution should be a partial solution or a full solution
      */
     public void solve(int[][] matrix,boolean partial) {
         setUpProblem(matrix);
         search(0,partial);
         root = null;
     }
+
+    /**
+     * @param matrix an exact cover problem in form of a double int array filled with 1s and 0s
+     * @param partial boolean to determine if the solution should be a partial solution or a full solution
+     * @param mode String to determine the difficulty of the partial solution
+     */
     public void solve(int[][] matrix,boolean partial,String mode) {
         setUpProblem(matrix);
         search(0,partial,mode);
@@ -177,6 +187,11 @@ public class Exact_Cover_solver {
 //        System.out.println();
     }
 
+    /**
+     * converts a given sudoku grid into a exact cover problem
+     * @param grid a sudoku Grid
+     * @return a sudoku grid in form of a double int array
+     */
     public int[][] sudokuToCover(Map<Pair<Integer,Integer>,Integer> grid){
         problemCopy = Arrays.stream(problem).map(int[]::clone).toArray(int[][]::new);
         for (int row = 1; row <= 9; row++) {
@@ -219,11 +234,20 @@ public class Exact_Cover_solver {
         }
         return result;
     }
+
+    /**
+     * generates a partial solution based on the mode of the game
+     * @param currentSolution the current solution
+     * @param mode the mode of the game
+     * @return a map of the partial solution
+     */
     public Map<Pair<Integer,Integer>,Integer> nodeToPartialSolution(List<Node> currentSolution,String mode) {
         switch (mode) {
+            case "Debugging" -> numberOfSquares = 79;
             case "Easy" -> numberOfSquares = 60;
-            case "Medium" -> numberOfSquares = 40;
+            case "Medium" -> numberOfSquares = 45;
             case "Hard" -> numberOfSquares = 30;
+            default -> numberOfSquares = 78;
         }
         currentSolutionCopy = new ArrayList<>(currentSolution);
         Map<Pair<Integer,Integer>,Integer> result;
@@ -243,10 +267,10 @@ public class Exact_Cover_solver {
         String line;
         int count = 0;
         int count2 = 0;
-        File matrix = new File("9x9 cover matrix.txt");
+//        File matrix = new File("src/main/resources/9x9covermatrix.txt");
         BufferedReader r;
         try {
-            r = new BufferedReader(new InputStreamReader(new FileInputStream(matrix)));
+            r = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/9x9covermatrix.txt")));
             while(count < 729) {
                 line = r.readLine();
                 String[] test2 = line.split(" ");

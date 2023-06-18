@@ -3,6 +3,7 @@ package com.fs.sudoku.Backend;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.ToNumberPolicy;
 import lombok.Getter;
 import lombok.Setter;
 import org.javatuples.Pair;
@@ -18,7 +19,9 @@ public class SudokuGrid {
     private Pair<Integer,Integer> key;
     private SudokuValidator sudokuValidator;
 
-
+    /**
+     * Sets the grid to an empty grid filled with 0s
+     */
     public void generateEmptyGrid() {
         for(int i = 0; i < 9; i++) {
             for(int j = 0; j < 9; j++) {
@@ -27,6 +30,10 @@ public class SudokuGrid {
             }
         }
     }
+
+    /**
+     * @param grid takes a map of coordinates and their corresponding values and sets the grid to the given values
+     */
     public void setSudokuGrid(Map<Pair<Integer,Integer>,Integer> grid) {
         this.generateEmptyGrid();
         for(Pair<Integer,Integer> key : grid.keySet()) {
@@ -34,16 +41,13 @@ public class SudokuGrid {
         }
     }
 
-    /**
-     * populates the subGridCoordinates map with the coordinates of the subgrid
-     */
+
 
 
     /**
-     * constructor for the grid which also calls populateSubGridCoordinates
+     * constructor for the grid
      */
     public SudokuGrid(){
-//      generateEmptyGrid();
     }
 
 
@@ -62,6 +66,20 @@ public class SudokuGrid {
     }
 
     /**
+     * Only used in conjunction with a deserialized grid
+     * @param key Pair of Longs(x,y) are given that correspond to coordinates in the grid
+     * @return returns the value at the given coordinates
+     */
+    public int getValueLong(Pair<Long,Long> key) {
+        if(key.getValue1() < 9  && key.getValue0() < 9) {
+            return sudokuGrid.get(key);
+        }
+        else {
+            return 0;
+        }
+    }
+
+    /**
      * takes a set of coordinates and their corresponding value to set in the grid
      * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
      * @param value An Integer value that should be set for the coordinates given
@@ -72,6 +90,7 @@ public class SudokuGrid {
         }
 
     }
+
 
     /**
      * @param key Pair of Integers(x,y) are given that correspond to coordinates in the grid
@@ -110,6 +129,9 @@ public class SudokuGrid {
     }
 
 
+    /**
+     * @param array takes a 2d array of integers and sets the grid to the given values
+     */
     public void intArrayToSudoku(int[][] array) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -120,8 +142,9 @@ public class SudokuGrid {
     }
 
 
-
-
+    /**
+     * Prints the grid in a readable format to console
+     */
     public void printGrid() {
         Collection<Integer> gridValues = sudokuGrid.values();
         Object[] array = gridValues.toArray();
@@ -155,6 +178,10 @@ public class SudokuGrid {
         }
         System.out.println(str);
     }
+
+    /**
+     * @return returns true if the grid is complete and valid
+     */
     public boolean isComplete() {
         sudokuValidator = new SudokuValidator();
         for (Integer value:sudokuGrid.values()) {
@@ -164,13 +191,29 @@ public class SudokuGrid {
         }
         return sudokuValidator.validate(this);
     }
+
+    /**
+     * @return returns the grid as a json string
+     */
     public String serialize() {
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
         return gson.toJson(sudokuGrid);
     }
+
+    /**
+     * @param json takes a json string and deserializes it to a sudoku grid
+     */
     public void deserializeToSudoku(String json) {
-        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
-        Type sudokuMapType = new TypeToken<Map<Pair<Integer,Integer>, Integer>>() {}.getType();
-        sudokuGrid = gson.fromJson(json,sudokuMapType);
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create();
+        Type sudokuMapType = new TypeToken<TreeMap<Pair<Integer,Integer>, Integer>>() {}.getType();
+        this.sudokuGrid = gson.fromJson(json,sudokuMapType);
+        this.sudokuGrid = convertGsonMapToSudokuGrid(sudokuGrid);
+    }
+    private Map<Pair<Integer,Integer>,Integer> convertGsonMapToSudokuGrid(Map<Pair<Integer,Integer>,Integer> gsonMap) {
+        Map<Pair<Integer,Integer>,Integer> sudokuGrid = new TreeMap<>();
+        for(Pair<Integer,Integer> key : gsonMap.keySet()) {
+            sudokuGrid.put(new Pair<>(key.getValue0().intValue(),key.getValue1().intValue()),gsonMap.get(key));
+        }
+        return sudokuGrid;
     }
 }

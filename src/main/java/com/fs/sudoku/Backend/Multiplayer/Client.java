@@ -26,11 +26,12 @@ public class Client {
     private final RandomPuzzleGenerator randomPuzzleGenerator = new RandomPuzzleGenerator();
     private long startTime;
     public static boolean vsWinOrLose;
-    protected static long timeTaken;
+    public static long timeTaken;
     public static boolean coop;
     public static boolean lastPlayer;
-    protected static boolean first;
-
+    public static boolean first;
+    public static boolean hasGeneratedPuzzle;
+    public static long OpponentTime = 0;
     private void sendInitialUDPPacket(String uuid,String code) {
         String sendingString = uuid + "&&" + code;
         byte[] sendingBytes = sendingString.getBytes();
@@ -43,12 +44,19 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Connects to another client
+     * @param code The code entered by the user to connect to another
+     * @throws IOException
+     */
     public void connectToOtherClient(String code) throws IOException {
         Socket tcpSocket;
         BufferedReader tcpIn;
         String uuidString;
+        isConnected = false;
         try {
-            serverIp = InetAddress.getByName("206.189.251.215");
+            serverIp = InetAddress.getByName("159.223.248.222");
             tcpSocket = new Socket(serverIp,5000);
             tcpIn = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
             uuidString = tcpIn.readLine();
@@ -64,19 +72,28 @@ public class Client {
             otherClientIP = responseParts[0];
             otherClientPort = responseParts[1];
             String otherClientUUID = responseParts[2];
-            System.out.println(otherClientIP + " "+ otherClientPort);
+            System.out.println(otherClientIP + ":" + otherClientPort);
             System.out.println(otherClientUUID);
             gotResponse = true;
         }
+        isConnected = true;
+        multiplayerGrid = new SudokuGrid();
         IncomingUdpThread u = new IncomingUdpThread(udpSocket);
         new Thread(u).start();
         OutgoingUdpThread ou = new OutgoingUdpThread(udpSocket,otherClientIP,otherClientPort);
         new Thread(ou).start();
-        isConnected = true;
         tcpSocket.close();
     }
+
+    /**
+     * Starts the multiplayer game
+     * @param mode VS or Co-op
+     */
     public void startMultiplayer(String mode) {
-        multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Medium"));
+        if(!Client.multiplayerGridSet) {
+            multiplayerGrid.setSudokuGrid(randomPuzzleGenerator.generateRandomPuzzle("Medium"));
+            Client.hasGeneratedPuzzle = true;
+        }
         OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
         switch (mode) {
             case "VS" -> startVS();
@@ -87,13 +104,21 @@ public class Client {
          startTime = System.nanoTime();
 
     }
+
+    /**
+     * Sends the time taken to complete the puzzle to the other player
+     */
     public void stopVs() {
         long endTime = System.nanoTime();
-         timeTaken = startTime - endTime;
+         timeTaken = endTime - startTime;
         OutgoingUdpThread.MessageQueue.add(String.valueOf(timeTaken).getBytes());
     }
     private void startCoOp() {
     }
+
+    /**
+     * Sends the current state of the grid to the other player
+     */
     public void sendSudoku() {
         OutgoingUdpThread.MessageQueue.add(multiplayerGrid.serialize().getBytes());
     }
