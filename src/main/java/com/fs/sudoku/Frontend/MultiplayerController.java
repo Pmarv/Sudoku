@@ -272,10 +272,17 @@ public class MultiplayerController {
                     if (Client.lastPlayer) {
                         Platform.runLater(alert::show);
                     } else {
+                        Platform.runLater(()-> {
+                            alert.getButtonTypes().add(ButtonType.CANCEL);
+                            alert.hide();
+                            alert.getButtonTypes().clear();
+                        }  );
                         updateGrid();
-                        alert.getButtonTypes().add(ButtonType.CANCEL);
-                        alert.close();
-                        alert.getButtonTypes().clear();
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             });
@@ -371,8 +378,8 @@ public class MultiplayerController {
         if (mode.equals("VS")) {
             handleGridButtonAction(event);
         } else if (mode.equals("Co-op")){
-            handleGridButtonAction(event);
             client.sendSudoku();
+            handleGridButtonAction(event);
             Client.lastPlayer = true;
         }
     }
@@ -382,11 +389,7 @@ public class MultiplayerController {
                 for (int j = 0; j < 9; j++) {
                     String buttonId = "Sudoku_Button_" + (int) i + (int) j;
                     Button button = (Button) scene.lookup("#" + buttonId);
-                    if(Client.hasGeneratedPuzzle) {
-                        value = Client.multiplayerGrid.getValue(new Pair<>(i, j));
-                    } else {
-                        value = Client.multiplayerGrid.getValueLong(new Pair<>((long)i,(long) j));
-                    }
+                    value = Client.multiplayerGrid.getValueLong(new Pair<>((long)i,(long) j));
                     button.setText(String.valueOf(value));
                 }
             }

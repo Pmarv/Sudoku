@@ -29,7 +29,7 @@ public class IncomingUdpThread implements Runnable{
                     System.out.println(Message);
                 }
                 if (Message.equals("Ping")) {
-//                    System.out.println("Got a ping");
+                    System.out.println("Got a ping");
                     continue;
                 }
                 if (Message.contains("val0")) {
@@ -40,6 +40,7 @@ public class IncomingUdpThread implements Runnable{
                         Client.first = false;
                         Client.lastPlayer = true;
                     } else if(Client.coop && Client.lastPlayer) {
+                        System.out.println("Got a puzzle, can play now");
                         Client.multiplayerGrid.deserializeToSudoku(Message.trim());
                         Client.lastPlayer = false;
                     }
