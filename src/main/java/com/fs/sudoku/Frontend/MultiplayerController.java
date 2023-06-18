@@ -229,7 +229,7 @@ public class MultiplayerController {
     private Scene previousScene;
     private Client client;
     private int value;
-    public static boolean isUptoDate = false;
+    public static boolean isUptoDate = true;
     @FXML
     public void init() {
         Client.multiplayerGrid.printGrid();
@@ -270,7 +270,7 @@ public class MultiplayerController {
         if(mode.equals("Co-op")) {
             Thread t = new Thread(() -> {
                 while (Client.isConnected) {
-                    if (Client.lastPlayer) {
+                    if (Client.lastPlayer && !Client.multiplayerGrid.isComplete()) {
                         Platform.runLater(alert::show);
                     } else {
                         Platform.runLater(()-> {
@@ -281,6 +281,14 @@ public class MultiplayerController {
                         if (!isUptoDate) {
                             updateGrid();
                         isUptoDate = true;
+                        if (Client.multiplayerGrid.isComplete()) {
+                            Platform.runLater(() -> {
+                                Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
+                                alert1.setTitle("Congratulations!");
+                                alert1.setHeaderText("You guys have completed the puzzle!");
+                                alert1.show();
+                            });
+                        }
                         }
                     }
                     try {
@@ -373,7 +381,7 @@ public class MultiplayerController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Sudoku");
             alert.setHeaderText("Congratulations!");
-            alert.setContentText("You solved the puzzle!");
+            alert.setContentText("You guys solved the puzzle!");
             alert.showAndWait();
             }
         }
@@ -382,8 +390,8 @@ public class MultiplayerController {
         if (mode.equals("VS")) {
             handleGridButtonAction(event);
         } else if (mode.equals("Co-op")){
-            client.sendSudoku();
             handleGridButtonAction(event);
+            client.sendSudoku();
             Client.lastPlayer = true;
             isUptoDate = true;
         }
