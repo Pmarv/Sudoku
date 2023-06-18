@@ -47,6 +47,8 @@ public class MultiplayerCodeController {
         alert.setTitle("Please Wait");
         alert.setHeaderText(null);
         alert.setContentText("Connecting to another player. Please Standby");
+        alert.getButtonTypes().remove(ButtonType.OK);
+        alert.getButtonTypes().add(ButtonType.CANCEL);
         alert.show();
         Thread t = new Thread(() -> {
             try {

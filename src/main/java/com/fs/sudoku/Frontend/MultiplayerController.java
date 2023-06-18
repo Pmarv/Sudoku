@@ -236,13 +236,9 @@ public class MultiplayerController {
         Client.multiplayerGrid.printGrid();
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                String buttonId = "Sudoku_Button_" +(int) i + (int)j;
+                String buttonId = "Sudoku_Button_" + i + j;
                 Button button = (Button) scene.lookup("#" + buttonId);
-                if(Client.hasGeneratedPuzzle) {
-                     value = Client.multiplayerGrid.getValue(new Pair<>(i, j));
-                } else {
-                 value = Client.multiplayerGrid.getValueLong(new Pair<>((long)i,(long) j));
-                }
+                value = Client.multiplayerGrid.getValue(new Pair<>(i, j));
                 if (value != 0) {
                     initialValues[i][j] = true;
                 }
@@ -401,9 +397,9 @@ public class MultiplayerController {
         Platform.runLater(() -> {
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
-                    String buttonId = "Sudoku_Button_" + (int) i + (int) j;
+                    String buttonId = "Sudoku_Button_" +  i +  j;
                     Button button = (Button) scene.lookup("#" + buttonId);
-                    value = Client.multiplayerGrid.getValueLong(new Pair<>((long)i,(long) j));
+                    value = Client.multiplayerGrid.getValue(new Pair<>(i,j));
                     button.setText(String.valueOf(value));
                 }
             }

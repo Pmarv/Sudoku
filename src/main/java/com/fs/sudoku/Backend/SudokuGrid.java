@@ -207,5 +207,13 @@ public class SudokuGrid {
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create();
         Type sudokuMapType = new TypeToken<TreeMap<Pair<Integer,Integer>, Integer>>() {}.getType();
         this.sudokuGrid = gson.fromJson(json,sudokuMapType);
+        this.sudokuGrid = convertGsonMapToSudokuGrid(sudokuGrid);
+    }
+    private Map<Pair<Integer,Integer>,Integer> convertGsonMapToSudokuGrid(Map<Pair<Integer,Integer>,Integer> gsonMap) {
+        Map<Pair<Integer,Integer>,Integer> sudokuGrid = new TreeMap<>();
+        for(Pair<Integer,Integer> key : gsonMap.keySet()) {
+            sudokuGrid.put(new Pair<>(key.getValue0().intValue(),key.getValue1().intValue()),gsonMap.get(key));
+        }
+        return sudokuGrid;
     }
 }
